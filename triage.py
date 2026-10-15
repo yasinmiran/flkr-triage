@@ -1,12 +1,13 @@
 import argparse
 import csv
 import sys
+from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 
-DEFAULT_REGISTRY = "equipment_registry.csv"
-DEFAULT_FINDINGS = "inspection_findings.csv"
+DEFAULT_REGISTRY = "data/equipment_registry.csv"
+DEFAULT_FINDINGS = "data/inspection_findings.csv"
 
 
 @dataclass(frozen=True)
@@ -14,8 +15,8 @@ class Equipment:
     equipment_id: str
     equipment_type: str
     service_description: str
-    criticality_score: int
-    reliability_score: int
+    criticality_score: int  # 1 = least critical, 10 = most critical
+    reliability_score: int  # 1 = fails frequently, 10 = highly reliable.
     safety_critical_element: bool
     redundancy: str
     engineer_comment: str
@@ -61,6 +62,13 @@ class Finding:
         )
 
 
+@dataclass
+class Case:
+    finding: Finding
+    equipment: Equipment
+    notes: list[str] = field(default_factory=list)
+
+
 def main(argv=None):
     registry_path, findings_path = parse_args(argv)
     registry_rows = load_csv(registry_path)
@@ -68,25 +76,27 @@ def main(argv=None):
     equipments = [Equipment.from_row(row) for row in registry_rows]
     findings = [Finding.from_row(row) for row in findings_rows]
     registry = {e.equipment_id: e for e in equipments}
+    findings_by_equipment: dict[str, list[Finding]] = defaultdict(list)
+    cases = []
+    for f in findings:
+        eq = registry.get(f.equipment_id)
+        if eq is None:
+            sys.exit(f"error: finding {f.finding_id} references unknown equipment {f.equipment_id}")
+        findings_by_equipment[f.equipment_id].append(f)
+        cases.append(Case(finding=f, equipment=eq))
     return 0
 
 
 def parse_args(argv):
-    # setup positional arguments
     parser = argparse.ArgumentParser(description="Triage inspection findings against the equipment registry.")
     parser.add_argument("registry", nargs="?", default=DEFAULT_REGISTRY, help="equipment registry CSV")
     parser.add_argument("findings", nargs="?", default=DEFAULT_FINDINGS, help="inspection findings CSV")
     args = parser.parse_args(argv)
-
-    # get the absolute paths
     registry_path = Path(args.registry).expanduser().resolve()
     findings_path = Path(args.findings).expanduser().resolve()
-
-    # then go through each path and see whther the files exist.
     for p in (registry_path, findings_path):
         if not p.is_file():
             sys.exit(f"error: file not found: {p}")
-
     return registry_path, findings_path
 
 
