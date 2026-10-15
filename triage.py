@@ -1,5 +1,6 @@
 import argparse
 import csv
+import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -8,6 +9,7 @@ from pathlib import Path
 
 DEFAULT_REGISTRY = "data/equipment_registry.csv"
 DEFAULT_FINDINGS = "data/inspection_findings.csv"
+SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
 
 
 @dataclass(frozen=True)
@@ -78,13 +80,23 @@ def main(argv=None):
     registry = {e.equipment_id: e for e in equipments}
     findings_by_equipment: dict[str, list[Finding]] = defaultdict(list)
     cases = []
-    for f in findings:
-        eq = registry.get(f.equipment_id)
+    for finding in findings:
+        eq = registry.get(finding.equipment_id)
         if eq is None:
-            sys.exit(f"error: finding {f.finding_id} references unknown equipment {f.equipment_id}")
-        findings_by_equipment[f.equipment_id].append(f)
-        cases.append(Case(finding=f, equipment=eq))
+            sys.exit(f"error: finding {finding.finding_id} references unknown equipment {finding.equipment_id}")
+        findings_by_equipment[finding.equipment_id].append(finding)
+        cases.append(Case(finding=finding, equipment=eq))
+    for fs in findings_by_equipment.values():
+        fs.sort(key=lambda f: f.reported_date)
+    for case in cases:
+        rel = findings_by_equipment.get(case.equipment.equipment_id)
+        case.notes = [first_sentence(f.finding_description) for f in rel if f.finding_id != case.finding.finding_id]
+    [print(f) for f in cases]
     return 0
+
+
+def first_sentence(text: str) -> str:
+    return SENTENCE_END.split(text.strip(), maxsplit=1)[0]
 
 
 def parse_args(argv):
