@@ -2,7 +2,6 @@ import argparse
 import csv
 import re
 import sys
-import textwrap
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
