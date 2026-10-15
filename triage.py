@@ -6,11 +6,25 @@ import textwrap
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
+from enum import Enum
 from pathlib import Path
 
 DEFAULT_REGISTRY = "data/equipment_registry.csv"
 DEFAULT_FINDINGS = "data/inspection_findings.csv"
 SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+
+
+class NoteKind(Enum):
+    SIBLING = "sibling"
+    PARTNER_HAS_FINDING = "partner_has_finding"
+    PARTNER_UNVERIFIED = "partner_unverified"
+    VOTED_GROUP = "voted_group"
+
+
+@dataclass(frozen=True)
+class Note:
+    kind: NoteKind
+    text: str
 
 
 @dataclass(frozen=True)
@@ -69,7 +83,7 @@ class Finding:
 class Case:
     finding: Finding
     equipment: Equipment
-    notes: list[str] = field(default_factory=list)
+    notes: list[Note] = field(default_factory=list)
 
 
 def main(argv=None):
@@ -99,12 +113,12 @@ def leading_sentences(text: str, n: int) -> str:
     return " ".join(SENTENCE_END.split(text.strip(), maxsplit=n)[:n])
 
 
-def sibling_note(finding: Finding) -> str:
+def sibling_note(finding: Finding) -> Note:
     note = f"""
     Other finding on {finding.equipment_id} in this inspection
     period: {finding.finding_id} ({finding.reported_date}): {leading_sentences(finding.finding_description, 2)}
     """
-    return textwrap.dedent(note).strip()
+    return Note(NoteKind.SIBLING, textwrap.dedent(note).strip())
 
 
 def parse_args(argv):
