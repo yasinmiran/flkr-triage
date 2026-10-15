@@ -63,14 +63,11 @@ class Finding:
 
 def main(argv=None):
     registry_path, findings_path = parse_args(argv)
-
-    # load both files into memory
-    registry = load_csv(registry_path)
-    findings = load_csv(findings_path)
-
-    results = triage(registry, findings)
-    report(results)
-
+    registry_rows = load_csv(registry_path)
+    findings_rows = load_csv(findings_path)
+    equipments = [Equipment.from_row(row) for row in registry_rows]
+    findings = [Finding.from_row(row) for row in findings_rows]
+    registry = {e.equipment_id: e for e in equipments}
     return 0
 
 
