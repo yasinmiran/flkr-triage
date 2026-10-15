@@ -11,7 +11,9 @@ from pathlib import Path
 
 DEFAULT_REGISTRY = "data/equipment_registry.csv"
 DEFAULT_FINDINGS = "data/inspection_findings.csv"
+
 SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+PARTNER_TAG = re.compile(r"\(([A-Z]+-\d+)\)")
 
 
 class NoteKind(Enum):
@@ -92,25 +94,45 @@ def main(argv=None):
     findings_rows = load_csv(findings_path)
     equipments = [Equipment.from_row(row) for row in registry_rows]
     findings = [Finding.from_row(row) for row in findings_rows]
-    registry = {e.equipment_id: e for e in equipments}
+    registry: dict[str, Equipment] = {e.equipment_id: e for e in equipments}
     findings_by_equipment: dict[str, list[Finding]] = defaultdict(list)
-    cases = []
+    cases: list[Case] = []
     for finding in findings:
         eq = registry.get(finding.equipment_id)
         if eq is None:
             sys.exit(f"error: finding {finding.finding_id} references unknown equipment {finding.equipment_id}")
         findings_by_equipment[finding.equipment_id].append(finding)
         cases.append(Case(finding=finding, equipment=eq))
-    for fs in findings_by_equipment.values():
-        fs.sort(key=lambda f: f.reported_date)
-    for case in cases:
-        siblings = findings_by_equipment[case.equipment.equipment_id]
-        case.notes.extend([sibling_note(f) for f in siblings if f.finding_id != case.finding.finding_id])
+    annotation_batch(cases, registry, findings_by_equipment)
     return 0
 
 
 def leading_sentences(text: str, n: int) -> str:
     return " ".join(SENTENCE_END.split(text.strip(), maxsplit=n)[:n])
+
+
+def annotation_batch(
+        cases: list[Case],
+        registry: dict[str, Equipment],
+        findings_by_equipment: dict[str, list[Finding]]
+):
+    for siblings in findings_by_equipment.values():
+        siblings.sort(key=lambda f: f.reported_date)
+
+    for case in cases:
+        own, eq = case.finding, case.equipment
+        for fi in findings_by_equipment[eq.equipment_id]:
+            if fi.finding_id != own.finding_id:
+                case.notes.append(sibling_note(fi))
+        value = eq.redundancy.strip().lower()
+        if value in ("none", "yes (bypass available)"):
+            pass
+        elif value.startswith("voted"):
+            pass
+        elif m := PARTNER_TAG.search(eq.redundancy):
+            pass
+        else:
+            pass
 
 
 def sibling_note(finding: Finding) -> Note:
