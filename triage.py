@@ -128,11 +128,31 @@ def annotation_batch(
         if value in ("none", "yes (bypass available)"):
             pass
         elif value.startswith("voted"):
-            pass
+            case.notes.append(
+                Note(
+                    NoteKind.VOTED_GROUP,
+                    f"{eq.redundancy} group: losing one head is degradation, not defeat, but the margin is gone."
+                )
+            )
         elif m := PARTNER_TAG.search(eq.redundancy):
-            pass
+            partner = m.group(1)
+            if partner not in registry:
+                case.notes.append(
+                    Note(
+                        NoteKind.PARTNER_UNVERIFIED,
+                        f"Redundant partner {partner} is not in the registry; its condition cannot be verified."
+                    )
+                )
+            elif partner in findings_by_equipment:
+                ids = ", ".join(f.finding_id for f in findings_by_equipment[partner])
+                case.notes.append(
+                    Note(
+                        NoteKind.PARTNER_HAS_FINDING,
+                        f"Redundant partner {partner} also has an open finding in this inspection period: {ids}. Do not credit redundancy."
+                    )
+                )
         else:
-            pass
+            sys.exit(f"error: unrecognised redundancy value {eq.redundancy!r} on {eq.equipment_id}")
 
 
 def sibling_note(finding: Finding) -> Note:
