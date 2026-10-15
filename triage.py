@@ -2,6 +2,7 @@ import argparse
 import csv
 import re
 import sys
+import textwrap
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
@@ -89,14 +90,21 @@ def main(argv=None):
     for fs in findings_by_equipment.values():
         fs.sort(key=lambda f: f.reported_date)
     for case in cases:
-        rel = findings_by_equipment.get(case.equipment.equipment_id)
-        case.notes = [first_sentence(f.finding_description) for f in rel if f.finding_id != case.finding.finding_id]
-    [print(f) for f in cases]
+        siblings = findings_by_equipment[case.equipment.equipment_id]
+        case.notes.extend([sibling_note(f) for f in siblings if f.finding_id != case.finding.finding_id])
     return 0
 
 
-def first_sentence(text: str) -> str:
-    return SENTENCE_END.split(text.strip(), maxsplit=1)[0]
+def leading_sentences(text: str, n: int) -> str:
+    return " ".join(SENTENCE_END.split(text.strip(), maxsplit=n)[:n])
+
+
+def sibling_note(finding: Finding) -> str:
+    note = f"""
+    Other finding on {finding.equipment_id} in this inspection
+    period: {finding.finding_id} ({finding.reported_date}): {leading_sentences(finding.finding_description, 2)}
+    """
+    return textwrap.dedent(note).strip()
 
 
 def parse_args(argv):
