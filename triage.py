@@ -1,10 +1,66 @@
 import argparse
 import csv
 import sys
+from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 
 DEFAULT_REGISTRY = "equipment_registry.csv"
 DEFAULT_FINDINGS = "inspection_findings.csv"
+
+
+# data classes
+
+@dataclass(frozen=True)
+class Equipment(object):
+    equipment_id: str
+    equipment_type: str
+    service_description: str
+    criticality_score: int
+    reliability_score: int
+    safety_critical_element: bool
+    redundancy: str
+    engineer_comment: str
+
+    @classmethod
+    def from_row(cls, row: dict) -> "Equipment":
+        return cls(
+            equipment_id=row["equipment_id"].strip(),
+            equipment_type=row["equipment_type"].strip(),
+            service_description=row["service_description"].strip(),
+            criticality_score=int(row["criticality_score"]),
+            reliability_score=int(row["reliability_score"]),
+            safety_critical_element=row["safety_critical_element"].strip().lower() == "yes",
+            redundancy=row["redundancy"].strip(),
+            engineer_comment=row["engineer_comment"].strip(),
+        )
+
+
+@dataclass(frozen=True)
+class Finding:
+    finding_id: str
+    reported_date: date
+    equipment_id: str
+    equipment_type: str
+    inspection_type: str
+    inspection_method: str
+    finding_description: str
+    reported_by: str
+    reporter_role: str
+
+    @classmethod
+    def from_row(cls, row: dict) -> "Finding":
+        return cls(
+            finding_id=row["finding_id"].strip(),
+            reported_date=date.fromisoformat(row["reported_date"].strip()),
+            equipment_id=row["equipment_id"].strip(),
+            equipment_type=row["equipment_type"].strip(),
+            inspection_type=row["inspection_type"].strip(),
+            inspection_method=row["inspection_method"].strip(),
+            finding_description=row["finding_description"].strip(),
+            reported_by=row["reported_by"].strip(),
+            reporter_role=row["reporter_role"].strip(),
+        )
 
 
 def main(argv=None):
