@@ -9,10 +9,8 @@ DEFAULT_REGISTRY = "equipment_registry.csv"
 DEFAULT_FINDINGS = "inspection_findings.csv"
 
 
-# data classes
-
 @dataclass(frozen=True)
-class Equipment(object):
+class Equipment:
     equipment_id: str
     equipment_type: str
     service_description: str
