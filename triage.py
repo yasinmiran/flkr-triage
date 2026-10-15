@@ -103,7 +103,7 @@ def main(argv=None):
             sys.exit(f"error: finding {finding.finding_id} references unknown equipment {finding.equipment_id}")
         findings_by_equipment[finding.equipment_id].append(finding)
         cases.append(Case(finding=finding, equipment=eq))
-    annotation_batch(cases, registry, findings_by_equipment)
+    annotate_batch(cases, registry, findings_by_equipment)
     return 0
 
 
@@ -111,7 +111,7 @@ def leading_sentences(text: str, n: int) -> str:
     return " ".join(SENTENCE_END.split(text.strip(), maxsplit=n)[:n])
 
 
-def annotation_batch(
+def annotate_batch(
         cases: list[Case],
         registry: dict[str, Equipment],
         findings_by_equipment: dict[str, list[Finding]]
@@ -156,11 +156,10 @@ def annotation_batch(
 
 
 def sibling_note(finding: Finding) -> Note:
-    note = f"""
-    Other finding on {finding.equipment_id} in this inspection
-    period: {finding.finding_id} ({finding.reported_date}): {leading_sentences(finding.finding_description, 2)}
-    """
-    return Note(NoteKind.SIBLING, textwrap.dedent(note).strip())
+    return Note(
+        NoteKind.SIBLING,
+        f"Other finding on {finding.equipment_id} in this inspection period: {finding.finding_id} ({finding.reported_date}): {leading_sentences(finding.finding_description, 2)}"
+    )
 
 
 def parse_args(argv):
