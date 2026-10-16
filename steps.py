@@ -184,6 +184,11 @@ def scalar(value) -> str:
 MODEL = "claude-sonnet-5-5"
 CACHE_DIR = Path(__file__).with_name(".cache")
 MAX_ATTEMPTS = 3
+MAX_TOKENS = 4000  # thinking counts against it; 1500 was within a few hundred of observed use
+
+
+class ModelReplyError(Exception):
+    pass
 UNSUPPORTED_SCHEMA_KEYS = {"minimum", "maximum", "minLength", "maxLength", "exclusiveMinimum", "exclusiveMaximum",
                            "title"}
 
@@ -206,12 +211,14 @@ def ask_model(client: anthropic.Anthropic, system: str, messages: list[MessagePa
         return cached.read_text()
     response = client.messages.create(
         model=MODEL,
-        max_tokens=1500,
+        max_tokens=MAX_TOKENS,
         system=system,
         messages=messages,
         output_config=OutputConfigParam(format=JSONOutputFormatParam(type="json_schema", schema=SCHEMA)),
     )
-    text = next(block.text for block in response.content if block.type == "text")
+    text = next((block.text for block in response.content if block.type == "text"), None)
+    if text is None or response.stop_reason == "max_tokens":
+        raise ModelReplyError(f"no complete text block (stop_reason={response.stop_reason})")
     CACHE_DIR.mkdir(exist_ok=True)
     cached.write_text(text)
     return text
@@ -222,7 +229,10 @@ def assess(client: anthropic.Anthropic, case: Case, rules: dict, rules_text: str
     messages: list[MessageParam] = [MessageParam(role="user", content=user_prompt(case, rules))]
     invariants_retried = False
     for _ in range(MAX_ATTEMPTS):
-        text = ask_model(client, system, messages, rules_text)
+        try:
+            text = ask_model(client, system, messages, rules_text)
+        except (anthropic.APIError, ModelReplyError) as error:
+            return Verdict(None, [f"model call failed: {error}"])
         try:
             assessment = Assessment.model_validate_json(text)
         except ValidationError as error:
