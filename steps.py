@@ -318,9 +318,9 @@ def band_name(score: int, rules: dict) -> str:
 
 # 6. review
 
-def review(a: Assessment, case: Case, verdict: Verdict, fired: list[str], urgency_score: int) -> tuple[bool, str | None]:
+def review(a: Assessment, case: Case, verdict: Verdict, fired: list[str], urgency_score: int, rules: dict) -> tuple[bool, str | None]:
     reasons = []
-    if urgency_score >= 9:
+    if urgency_score >= rules["urgency_bands"]["today"][0]:
         reasons.append("Urgency is in the today band.")
     if case.equipment.safety_critical_element:
         reasons.append("Safety Critical Element: every ticket is checked by a human before it enters the work queue.")
@@ -355,7 +355,7 @@ def build_ticket(case: Case, verdict: Verdict, rules: dict) -> Ticket:
         )
     urgency_score, reasons = urgency(a, case, rules)
     urgency_score, fired = apply_overrides(urgency_score, reasons, a, case, rules)
-    required, reason = review(a, case, verdict, fired, urgency_score)
+    required, reason = review(a, case, verdict, fired, urgency_score, rules)
     return Ticket(
         ticket_id=ticket_id, finding_id=f.finding_id, equipment_id=eq.equipment_id,
         summary=a.summary,
