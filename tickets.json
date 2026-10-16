@@ -1,25 +1,25 @@
 {
-  "generated_at": "2026-10-16T12:39:31+00:00",
+  "generated_at": "2026-10-16T12:49:58+00:00",
   "tickets_generated": 21,
   "tickets": [
     {
       "ticket_id": "TKT-1001",
       "finding_id": "F-1001",
       "equipment_id": "K-3401",
-      "summary": "K-3401 main gas export compressor non-drive end bearing vibration has risen from 2.1 to 4.6 mm/s in six weeks, with growing 1x and sidebands, not plateaued. Single train, no spare: a trip means recycle and lost production within the hour.",
+      "summary": "Non-drive end bearing vibration on K-3401, the single-train gas export compressor, has more than doubled (2.1 to 4.6 mm/s in six weeks) with growing 1x and sidebands, not plateaued. A trip would force recycle and cut production within the hour.",
       "likelihood_of_failure": {
         "score": 8,
-        "rationale": "Finding says 'the trend is clearly upward and it has not plateaued'; vibration more than doubled (2.1 to 4.6 mm/s) in six weeks. The equipment rule says a bearing with a non-plateaued vibration trend is high likelihood. Reliability 7/10 (fairly reliable) is outweighed by the active trend. Not at alarm yet and no confirmed failure, so short of the top of the range."
+        "rationale": "Finding states vibration 'climbed from 2.1 mm/s to 4.6 mm/s over the last six weeks' and 'has not plateaued'; the equipment rule makes a bearing with a non-plateaued trend high likelihood. Growing 1x with sidebands indicates a progressing mechanism. Not yet at alarm and no functional failure, so not top of range. Reliability 7/10 only a starting point, tempered by the trend."
       },
       "impact_of_failure": {
         "score": 8,
-        "rationale": "Registry criticality 10 and redundancy None; engineer comment: 'Single train, no spare, no workaround' and a trip 'cuts production within the hour'. Not a Safety Critical Element and the consequence is production loss/recycle, not a major accident, so scored below the maximum. A bearing failure could also cause secondary machine damage, extending outage."
+        "rationale": "Criticality 10/10 and registry redundancy 'None': 'Single train, no spare, no workaround'; a trip means recycle and production cut within the hour. Not a safety critical element and no major accident escalation indicated, so held below the maximum; consequence is production loss. F-1019 (loose lagging) is a housekeeping item and does not alter this."
       },
       "urgency": {
         "score": 8,
         "rationale": "derived 8.0 from impact 8 and likelihood 8, impact weighted. Band: this week."
       },
-      "recommended_action": "Request same-day rotating equipment specialist review of the NDE bearing spectrum (1x and sidebands). Increase monitoring frequency, set interim alarm/trip limits, and plan bearing inspection/repair at the earliest outage window if the trend continues.",
+      "recommended_action": "Have the rotating equipment specialist review the spectrum today, increase vibration sampling frequency, set an interim alarm/trip action limit, and plan a controlled bearing inspection or intervention window before the trend reaches alarm.",
       "review_required": false,
       "review_reason": null
     },
@@ -27,20 +27,20 @@
       "ticket_id": "TKT-1002",
       "finding_id": "F-1002",
       "equipment_id": "PSV-1310",
-      "summary": "PSV-1310, the sole relief device on V-1201, is hissing from its outlet tailpipe with a hydrocarbon smell, though set pressure is well above operating pressure. This indicates the valve is passing, which impairs overpressure protection with no redundancy.",
+      "summary": "PSV-1310, the sole relief device on V-1201, has audible hissing at its outlet tailpipe and a hydrocarbon smell, though operating pressure is below set pressure. This indicates a passing seat, impairing overpressure protection. No redundancy; regulatory clock applies.",
       "likelihood_of_failure": {
-        "score": 9,
-        "rationale": "Operator reported \"Faint hissing from the PSV outlet tailpipe\" and \"a light hydrocarbon smell\" while \"Set pressure is well above current operating pressure so it should not be lifting\". Passing below set pressure is already a functional degradation (seat leakage), and detection by ear and smell is a late-stage method. Registry reliability 7/10 (inverted) is outweighed by the finding."
+        "score": 8,
+        "rationale": "\"Faint hissing from the PSV outlet tailpipe\" with \"a light hydrocarbon smell nearby\" while \"Set pressure is well above current operating pressure\" means the valve is passing when it should be tight. Detection by ear and smell is a late-stage indicator. Seat leakage is an active mechanism that typically worsens. Reliability 7/10 (good) does not offset the finding. Not scored 10 because there is no confirmed failure to lift on demand."
       },
       "impact_of_failure": {
         "score": 9,
-        "rationale": "Registry criticality 9/10, SCE: yes, redundancy: None. The finding \"hissing\" and \"hydrocarbon smell\" show an impaired protection layer against overpressure of V-1201; if the valve degrades further it may lose function or release hydrocarbons, with escalation potential and no backup relief."
+        "rationale": "Safety critical element (criticality 9/10) with \"Redundancy: None\" protecting V-1201 from overpressure; the finding \"hissing\" plus \"hydrocarbon smell\" shows a degraded protection layer, and a passing valve may fail to reseat or lift correctly. Loss of relief means overpressure could rupture the vessel with hydrocarbon release and escalation potential. Continued leakage also releases hydrocarbon to the vent/flare and gas to the deck."
       },
       "urgency": {
         "score": 9,
-        "rationale": "derived 9.0 from impact 9 and likelihood 9, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 8.7 from impact 9 and likelihood 8, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
-      "recommended_action": "Confirm leak with acoustic/thermal check and gas detection at the tailpipe; raise impairment register entry and notify regulator clock; assess V-1201 operating margin, and plan PSV isolation and swap/bench test with temporary protection in place.",
+      "recommended_action": "Treat as impaired protection layer: log in the impairment register and start the regulatory notification. Confirm passing with acoustic or thermal leak check, and gas detection at the tailpipe. Plan PSV removal for bench test and overhaul, with a temporary protection plan.",
       "review_required": true,
       "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency."
     },
@@ -48,20 +48,20 @@
       "ticket_id": "TKT-1003",
       "finding_id": "F-1003",
       "equipment_id": "FW-8102",
-      "summary": "Diesel firewater pump B (SCE) failed its first weekly test start and started after about 8 s of cranking. Starting batteries read 22.8 V at rest. Battery and starting problems recur on this pump. Partner FW-8101 also has open finding F-1017, so redundancy is not credited.",
+      "summary": "Diesel firewater pump B (SCE) failed its first start in the weekly test and started on the second try after ~8 s cranking; batteries 22.8 V at rest, low. Known recurring battery/air weakness. Partner FW-8101 has open F-1017, so no backup; losing both means shutdown.",
       "likelihood_of_failure": {
-        "score": 8,
-        "rationale": "Reliability 6/10 inverts to a mid likelihood, but the finding raises it: 'failed to start on the first attempt' and 'about eight seconds of cranking' show a degraded start. 'Starting batteries measured 22.8 V at rest which is on the low side' is an active, unmitigated mechanism. Battery and starting air faults recur on this pump, and it is historically the first to fail a test start. Not scored 9-10 because it 'started on the second attempt' and 'achieved rated discharge pressure', so the function was not lost outright."
+        "score": 9,
+        "rationale": "\"Pump failed to start on the first attempt\" is a failure to start on demand, the top-of-range scenario. \"Starting batteries measured 22.8 V at rest which is on the low side\" shows an active, unresolved cause. The engineer comment says battery and starting air problems recur and this pump is \"historically the first one to fail a test start\". Not 10 only because it \"Started on the second attempt\" and \"achieved rated discharge pressure\"."
       },
       "impact_of_failure": {
-        "score": 9,
-        "rationale": "Criticality is 10/10 and the pump is a Safety Critical Element. A failure to start on demand is the scenario the fire protection philosophy exists to prevent. The registry N+1 cover (FW-8101) cannot be credited because F-1017 is open against it this period. Losing both pumps means production shutdown and no firewater for a fire. Held at 9 rather than 10 because F-1017's severity is unknown and the pump did run normally once started."
+        "score": 10,
+        "rationale": "Criticality 10 and a safety critical element protecting against fire escalation. The registry N+1 with FW-8101 cannot be credited because F-1017 is open against FW-8101 this period. The protection layer is degraded: \"failed to start on the first attempt\" means a real demand may not get a start. A failed start here could leave no firewater pump, and both pumps unavailable means production shutdown."
       },
       "urgency": {
-        "score": 9,
-        "rationale": "derived 8.7 from impact 9 and likelihood 8, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "score": 10,
+        "rationale": "derived 9.7 from impact 10 and likelihood 9, impact weighted; near-certain failure, held at impact 10; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
-      "recommended_action": "Load-test and charge-check both starting battery banks, then replace or recharge them as needed. Check the charger, starting air supply and starter. Repeat the test start, recording crank attempts. Review F-1017 to confirm FW-8101 availability, and record the impairment.",
+      "recommended_action": "Load test and charge-check the starting batteries, inspect connections and charger, and check starting air supply and start system. Repeat witnessed test starts. Check F-1017 on FW-8101 and record the impairment in the register.",
       "review_required": true,
       "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency. The redundant partner also has an open finding; redundancy credit withdrawn."
     },
@@ -69,20 +69,20 @@
       "ticket_id": "TKT-1004",
       "finding_id": "F-1004",
       "equipment_id": "PL-1002",
-      "summary": "Corrosion under wet insulation on the 6 inch live production flowline near the low point drain: UT reads 6.2 mm vs 7.4 mm minimum allowable (nominal 11.1 mm). Wall is below minimum; no redundancy. Loss of containment of hydrocarbon at full wellhead pressure is the concern.",
+      "summary": "Corrosion under wet insulation on the 6 inch live production flowline at the low point drain: UT wall 6.2 mm vs 7.4 mm minimum allowable (11.1 mm nominal). Already below minimum on a no-redundancy hydrocarbon line at full wellhead pressure; loss of containment risk.",
       "likelihood_of_failure": {
         "score": 9,
-        "rationale": "UT gives \"6.2 mm against a nominal 11.1 mm and a minimum allowable of 7.4 mm\", so the wall is already 1.2 mm below allowable and about 44% lost. \"Insulation was saturated and there is heavy scaling\" indicates an active, unmitigated mechanism still progressing. Not a confirmed leak, so not 10. The 7/10 reliability score is outweighed by the finding."
+        "rationale": "UT gives \"6.2 mm against a nominal 11.1 mm and a minimum allowable of 7.4 mm\": wall is 1.2 mm below allowable, so the acceptance criterion is already breached. \"Insulation was saturated and there is heavy scaling\" indicates an active, unmitigated CUI mechanism still progressing. Reliability 7 of 10 is outweighed by the finding. Not scored 10 because no leak or functional failure is reported."
       },
       "impact_of_failure": {
         "score": 9,
-        "rationale": "Registry criticality 8 with redundancy \"None\"; it is a \"live hydrocarbon line at full wellhead pressure\", so a leak means high-energy hydrocarbon release with fire/explosion escalation potential. Not an SCE, but consequence of the failure mode (loss of containment) is major. Localised at the low point drain (\"Adjacent windows are within tolerance\") but the line cannot be bypassed."
+        "rationale": "Failure mode is loss of containment on a \"6 inch flowline\" carrying live hydrocarbon at full wellhead pressure, registry redundancy None, criticality 8. Not a registered SCE, but a release has major escalation potential. Adjacent windows being \"within tolerance\" suggests localised damage but does not reduce consequence if this location leaks."
       },
       "urgency": {
         "score": 9,
         "rationale": "derived 9.0 from impact 9 and likelihood 9, impact weighted. Band: today."
       },
-      "recommended_action": "Raise urgent fitness-for-service assessment of window 2 using the 6.2 mm UT reading, with a UT thickness grid to map the extent. Consider pressure reduction or isolation pending the result. Plan repair or replacement, and inspect other low points under insulation.",
+      "recommended_action": "Raise urgent fitness-for-service assessment (e.g. API 579) on the window 2 wall loss and extend UT mapping around the low point drain. Consider pressure reduction or isolation pending repair. Remove cladding on remaining low points and drains, and plan repair or replacement.",
       "review_required": true,
       "review_reason": "Urgency is in the today band."
     },
@@ -90,20 +90,20 @@
       "ticket_id": "TKT-1005",
       "finding_id": "F-1005",
       "equipment_id": "FG-0455",
-      "summary": "Point IR hydrocarbon detector FG-0455 in the compression module gave no response to 50% LEL span gas, repeated with a second cylinder. This is a confirmed failed head in a 2oo3 SCE group; the other two pass, so it runs 2oo2 with no margin left.",
+      "summary": "Point IR hydrocarbon detector FG-0455 in the compression module gave no response to 50% LEL span gas on two cylinders. It is a confirmed functional failure. The 2oo3 voted SCE group is degraded to 2oo2, so the next head failure defeats gas detection.",
       "likelihood_of_failure": {
         "score": 10,
-        "rationale": "Confirmed functional failure: \"did not respond to 50 percent LEL test gas. Repeated with a second cylinder, still no response.\" Two cylinders rule out a bad test gas source, so this is not benign calibration drift. A failure that has already occurred sits at the top of the range, despite reliability 6."
+        "rationale": "Finding states \"did not respond to 50 percent LEL test gas. Repeated with a second cylinder, still no response.\" The head has already failed its detection function, a confirmed functional failure at the top of the range. The registry reliability of 6 does not lower this; \"Head appears clean\" rules out a simple fouled-optics cause."
       },
       "impact_of_failure": {
         "score": 8,
-        "rationale": "SCE (criticality 9) detecting hydrocarbon gas in a compression module. \"The other two heads in the same voted group responded correctly\", so the group is degraded to 2oo2, not defeated. One more head failure defeats gas detection and voting, and the next failure removes the layer. Scored high, not maximum, because detection is still functional."
+        "rationale": "Criticality 9 and an SCE hydrocarbon detector in a compression module. \"The other two heads in the same voted group responded correctly,\" so the 2oo3 group is degraded, not defeated. It now runs 2oo2 with no margin, so the next failure defeats a protection layer against gas release and escalation. Scored high but not maximum because detection is still available."
       },
       "urgency": {
         "score": 9,
         "rationale": "derived 8.6 from impact 8 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
-      "recommended_action": "Raise a priority corrective work order to replace or repair the head and re-bump test it. Confirm the impairment is logged and the 2oo3 degradation has a deviation with compensatory measures. Bump test the other two heads and check the sensor for a common-cause fault.",
+      "recommended_action": "Treat the head as failed: record the impairment and apply compensatory measures. Replace or repair it, then recalibrate and re-function-test with span gas. Check the other two heads' response and the 2oo3 voting logic status.",
       "review_required": true,
       "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency."
     },
@@ -111,20 +111,20 @@
       "ticket_id": "TKT-1006",
       "finding_id": "F-1006",
       "equipment_id": "CR-5001",
-      "summary": "Main hoist wire rope on pedestal crane CR-5001 has 6 broken wires per lay length (discard at 10) in the drum-spooling section at max boom radius, with poor lubrication. Still within criterion but degrading; loss of crane stops supply boat offloads.",
+      "summary": "Main hoist wire rope on pedestal crane CR-5001 has 6 broken wires per lay length (discard at 10) in the drum-spooling section at max boom radius, with poor lubrication. Still within criterion, but degradation is active. Crane has no redundancy; loss stops supply boat offloads.",
       "likelihood_of_failure": {
         "score": 4,
-        "rationale": "\"6 broken wires within one lay length\" against a \"discard criterion... 10\" is inside acceptance, so a rope break is unlikely near term. Raised from the mid reliability (5/10, so likelihood baseline about 5) by \"lubrication is poor along the same section\", an active mechanism that accelerates wire breaks, and by the damage being at the max-radius spooling zone. Found by survey, not a functional failure."
+        "rationale": "\"6 broken wires within one lay length\" against a \"discard criterion... 10\" is inside acceptance, so rope break is unlikely near term. Raised from a mid-low base by \"Rope lubrication is poor along the same section\", an active mechanism, and wire breaks tend to accelerate. Found by survey, not late-stage detection. Reliability 5/10 gives a mid starting point."
       },
       "impact_of_failure": {
-        "score": 6,
-        "rationale": "Criticality 7/10, \"Redundancy: None\", and \"out of service means no supply boat offloads\", a logistics problem within days. Not a safety critical element and the finding concerns rope condition, not a protection layer. A rope failure under load would be a dropped-load hazard, but the rope is within discard limits and lifting-standard certification governs it, so impact is moderate-high."
+        "score": 5,
+        "rationale": "Registry redundancy is \"None\" and criticality 7/10, but the crane is not a safety critical element. The failure mode points to rope degradation with a discard or withdrawal decision, and the likely consequence is crane downtime: \"no supply boat offloads, which becomes a logistics problem within days\". A dropped-load event would be more serious, but the finding gives no sign it is imminent."
       },
       "urgency": {
         "score": 5,
-        "rationale": "derived 5.4 from impact 6 and likelihood 4, impact weighted. Band: this month."
+        "rationale": "derived 4.7 from impact 5 and likelihood 4, impact weighted. Band: this month."
       },
-      "recommended_action": "Re-lubricate the affected rope section, then re-inspect and count broken wires at the drum-spooling zone at a shortened interval under the lifting standard. Plan a rope replacement before the count nears 10 and track the break count trend.",
+      "recommended_action": "Relubricate the affected rope section and re-inspect the broken wire count at a shortened interval (e.g. monthly) to track the rate. Confirm the discard criterion with the lifting-standard competent person and plan rope replacement before 10 breaks per lay is reached.",
       "review_required": false,
       "review_reason": null
     },
@@ -132,41 +132,41 @@
       "ticket_id": "TKT-1007",
       "finding_id": "F-1007",
       "equipment_id": "P-3305",
-      "summary": "Inhibitor pump P-3305 has tripped on low discharge pressure three times this month, with suspected diaphragm failure. Injection to the wellhead manifold has been intermittent for about ten days. There is no standby, so downstream carbon steel is exposed to starvation and corrosion.",
+      "summary": "Corrosion inhibitor pump P-3305 has tripped on low discharge pressure three times this month, diaphragm suspected, and injection to the wellhead manifold has been intermittent for ~10 days. No redundancy. Inhibitor starvation risks delayed corrosion of downstream carbon steel.",
       "likelihood_of_failure": {
-        "score": 10,
-        "rationale": "Finding says \"tripped again on low discharge pressure. This is the third time this month\" and injection \"intermittent for around ten days\". This is a repeat, confirmed functional failure. Registry reliability 4/10 (inverted) also points to high likelihood."
+        "score": 9,
+        "rationale": "Finding states \"third time this month\" (repeat failure) and injection \"intermittent for around ten days\", so the function is already being lost. Registry reliability 4/10 (low, so higher likelihood) and engineer notes diaphragm failures every few months. Confirmed functional failure is at the top of the range."
       },
       "impact_of_failure": {
         "score": 8,
-        "rationale": "Registry shows redundancy \"None\" and criticality 7/10. The finding's \"Injection to the wellhead manifold has been intermittent for around ten days\" means inhibitor starvation is already underway. Corrosion in downstream carbon steel starts within weeks and shows up months later. Not an SCE, so not scored at the top."
+        "rationale": "Registry criticality 7/10 with redundancy \"None\", so no backup injection. Intermittent injection means inhibitor starvation is under way (\"intermittent for around ten days\"); carbon steel corrosion begins within weeks and the consequence is delayed and hidden, surfacing months later as wall loss and potential loss of containment. Not an SCE and production continues, so not scored 9-10."
       },
       "urgency": {
-        "score": 9,
-        "rationale": "derived 8.6 from impact 8 and likelihood 10, impact weighted. Band: today."
+        "score": 8,
+        "rationale": "derived 8.3 from impact 8 and likelihood 9, impact weighted. Band: this week."
       },
-      "recommended_action": "Raise a corrective work order to replace the diaphragm and check the discharge valves. Set up interim inhibitor dosing (batch or temporary pump). Quantify missed dose from the injection log. Ask the corrosion engineer to add probe or coupon monitoring downstream.",
-      "review_required": true,
-      "review_reason": "Urgency is in the today band."
+      "recommended_action": "Isolate and inspect P-3305 diaphragm and discharge check valves, replace the diaphragm, and test discharge pressure before return. Meanwhile arrange temporary inhibitor dosing (e.g. portable pump or batch treatment) and plan corrosion monitoring of the downstream carbon steel (coupons/UT).",
+      "review_required": false,
+      "review_reason": null
     },
     {
       "ticket_id": "TKT-1008",
       "finding_id": "F-1008",
       "equipment_id": "SC-1001",
-      "summary": "45 mm MPI-confirmed crack at the weld toe of a primary brace-to-node connection at grid B4 on the cellar deck primary steelwork, a safety critical element with no redundancy. Separate from coating finding F-1009. Crack depth and growth rate unknown.",
+      "summary": "A 45 mm crack, confirmed by MPI, at the weld toe of a primary brace-to-node connection at grid B4 on the cellar deck support steel (SCE, no redundancy). It is a structural defect, not a coating issue. Crack depth and growth rate are unknown.",
       "likelihood_of_failure": {
         "score": 7,
-        "rationale": "\"Confirmed by MPI, length approximately 45 mm\" at a weld toe is an active cracking mechanism that will grow under cyclic load. It is not a coating issue (\"Surrounding coating is intact\"). The high reliability score of 9 does not offset a confirmed crack. Depth is unknown and the connection still carries load, so this is not scored as a functional failure."
+        "rationale": "Registry reliability 9/10 would suggest low likelihood, but the finding moves it up: 'Crack indication found at the toe of the weld... Confirmed by MPI, length approximately 45 mm'. A crack at a weld toe is an active mechanism, likely fatigue, that can grow. The connection has not yet failed functionally, and depth and growth rate are unknown, so I held it below the top of the range."
       },
       "impact_of_failure": {
         "score": 9,
-        "rationale": "\"This is a primary structural connection\" on a safety critical element with registry redundancy \"None\" and criticality 9. Failure would degrade load paths on the cellar deck, with escalation potential for structural collapse and a major accident. F-1009 is a coating finding on the same item and gives no basis for downgrading this one."
+        "rationale": "'This is a primary structural connection' on a Safety Critical Element with registry redundancy 'None'. Loss of the connection would degrade the load path of the cellar deck support steelwork and could escalate to structural collapse. The coating backlog on F-1009 does not provide redundancy and does not dilute this finding."
       },
       "urgency": {
         "score": 8,
         "rationale": "derived 8.4 from impact 9 and likelihood 7, impact weighted. Band: this week."
       },
-      "recommended_action": "Raise a high-priority structural integrity ticket. Get a fracture mechanics fitness-for-service assessment with UT sizing of crack depth at B4. Set an interim load restriction and an MPI re-inspection interval. Plan weld repair. Do not batch with the coating backlog.",
+      "recommended_action": "Raise a priority structural integrity ticket separate from the coating backlog. Carry out a fracture mechanics fitness-for-service assessment with UT sizing of crack depth. Review loading and consider interim load restrictions or monitoring until repair.",
       "review_required": true,
       "review_reason": "Safety Critical Element: every ticket is checked by a human before it enters the work queue."
     },
@@ -174,20 +174,20 @@
       "ticket_id": "TKT-1009",
       "finding_id": "F-1009",
       "equipment_id": "SC-1001",
-      "summary": "Large-area coating breakdown with rust staining and flaking primer on the underside of cellar deck plating, grids C2-C5, found visually and already on the backlog. Substrate condition is unknown. Separate from the MPI-confirmed weld crack F-1008 at B4 on the same SCE.",
+      "summary": "Coating breakdown with rust staining and flaking primer on the underside of cellar deck plating, grids C2-C5. It is a repeat report already on the fabric backlog. No section loss was measured. Separate from the F-1008 weld crack at B4.",
       "likelihood_of_failure": {
         "score": 3,
-        "rationale": "Reliability 9/10 gives a low baseline. \"Rust staining and flaking primer over a large area\" and \"reported before\" mean an active, unmitigated corrosion mechanism that is still progressing, so I raised it slightly. No section loss or crack is reported, and a visual-only finding does not show substrate condition."
+        "rationale": "Finding says \"Rust staining and flaking primer over a large area\" and \"reported before\", so corrosion is active and the problem is recurring. It was found by visual round only, with no thickness or section loss reported, and registry reliability 9 of 10 gives a low starting point. Loss of structural function in the near term is unlikely."
       },
       "impact_of_failure": {
-        "score": 4,
-        "rationale": "The finding describes \"coating breakdown\", a fabric and housekeeping-level failure mode. It is not section loss or cracking, so it is scored on its own rather than at the SCE ceiling. I kept it above the minimum because the item is a Safety Critical Element (criticality 9) with no redundancy, and hidden corrosion under the flaking primer could have delayed structural consequences."
+        "score": 3,
+        "rationale": "The finding describes \"General coating breakdown\" on deck plating, a coating and appearance condition. It does not describe a node, primary connection or load-path member. The element is safety critical with no redundancy, which keeps the score above housekeeping level. The consequence is slow, hidden wall loss if the backlog persists, not a direct loss of support."
       },
       "urgency": {
-        "score": 4,
-        "rationale": "derived 3.7 from impact 4 and likelihood 3, impact weighted. Band: next planned shutdown."
+        "score": 3,
+        "rationale": "derived 3.0 from impact 3 and likelihood 3, impact weighted. Band: next planned shutdown."
       },
-      "recommended_action": "Close-up inspection of the C2-C5 deck underside, with UT thickness checks at the worst areas. Do this alongside the F-1008 follow-up at B4. Re-prioritise the coating repair in the fabric backlog.",
+      "recommended_action": "Keep on the fabric backlog with a coating repair date. Take close-up visual and UT thickness spot checks on the rusted plating between C2-C5 to rule out section loss. Handle F-1008 separately.",
       "review_required": true,
       "review_reason": "Safety Critical Element: every ticket is checked by a human before it enters the work queue."
     },
@@ -195,20 +195,20 @@
       "ticket_id": "TKT-1010",
       "finding_id": "F-1010",
       "equipment_id": "HVAC-7201",
-      "summary": "Temporary refuge pressurisation unit HVAC-7201 (safety critical, no redundancy) measured 27 Pa against 50 Pa minimum in function test. It cannot currently keep the refuge positive during a gas release, so musters could breathe hydrocarbons. Cause unknown (damper or door seals).",
+      "summary": "Temporary refuge pressurisation unit HVAC-7201 (SCE) measured 27 Pa against 50 Pa minimum in function test, so it fails its required function now. Fan runs at rated speed; likely damper not closing or degraded door seals. Hydrocarbons could enter the refuge in a gas release; no redundancy.",
       "likelihood_of_failure": {
         "score": 10,
-        "rationale": "Confirmed functional failure: 'differential pressure ... was 27 Pa against a required minimum of 50 Pa' means the unit already fails its required duty, even with 'Fan is running at rated speed'. Reliability 6/10 is not a mitigating factor against a measured failure."
+        "rationale": "Finding states 'Measured differential pressure across the accommodation envelope was 27 Pa against a required minimum of 50 Pa': a confirmed functional failure already occurred, so top of range. Reliability 6/10 is irrelevant given the measured failure."
       },
       "impact_of_failure": {
-        "score": 9,
-        "rationale": "Safety critical element with registry redundancy 'None' and criticality 9. The refuge protection layer is impaired: at 27 Pa the envelope may not exclude hydrocarbons during a gas release, putting people mustering there at risk. Escalation potential is high; no backup is available."
+        "score": 10,
+        "rationale": "SCE with criticality 9 and no registry redundancy; it keeps people mustering in the refuge from breathing hydrocarbons in a gas release. The 27 Pa vs 50 Pa shortfall means this protection layer is degraded now, with escalation potential for loss of life, so top of range."
       },
       "urgency": {
-        "score": 9,
-        "rationale": "derived 9.3 from impact 9 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "score": 10,
+        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
-      "recommended_action": "Raise a safety critical impairment and notify the OIM. Find and fix the leak path: inspect envelope dampers for full closure and check door seals. Then repeat the differential pressure test to confirm at least 50 Pa. Set interim controls until restored.",
+      "recommended_action": "Raise a protection-layer impairment and confirm it is in the impairment register with compensating measures. Find the leak path (damper position check, door seal and envelope smoke/leak survey), repair, then repeat the differential pressure test to at least 50 Pa.",
       "review_required": true,
       "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency."
     },
@@ -216,20 +216,20 @@
       "ticket_id": "TKT-1011",
       "finding_id": "F-1011",
       "equipment_id": "DEL-8300",
-      "summary": "Full flow test found about 12 of 60 north quadrant nozzles (20%) on DEL-8300 with no flow or distorted spray, though header flow was normal. Coverage over two producing wellheads is degraded. Recurring blockage; valve found chained closed on same branch (F-1020).",
+      "summary": "Full flow test found about 12 of 60 north quadrant deluge nozzles (20%) with no flow or distorted spray, blocked downstream of a normal skid. The quadrant is above two producing wellheads. The north branch valve was also found chained closed (F-1020) with no register entry.",
       "likelihood_of_failure": {
-        "score": 9,
-        "rationale": "\"Approximately 12 of the 60 nozzles in the north quadrant delivered either no flow or a badly distorted spray pattern\" is a confirmed functional failure on test, at the top of the range. Blockage is a recurring issue per the engineer comment, and F-1020 shows the same branch was isolated closed in this period. The registry reliability of 6 is outweighed by the confirmed failure."
+        "score": 10,
+        "rationale": "Failure has already occurred: \"Approximately 12 of the 60 nozzles in the north quadrant delivered either no flow or a badly distorted spray pattern\". Blockage is a recurring issue per the engineer, and F-1020 shows the same branch was isolated closed, so the function is already degraded."
       },
       "impact_of_failure": {
         "score": 10,
-        "rationale": "\"The affected quadrant sits directly above two producing wellheads\" and the system is a safety critical element (criticality 10) with registry redundancy None. A fire there would get degraded cooling and suppression, so a protection layer against a major fire/escalation is impaired. \"Skid pressure and flow at the header were normal\" means the fault is hidden from the skid. F-1020 on the same branch means no credit for any partner or other mitigation."
+        "rationale": "SCE with registry redundancy \"None\" and criticality 10. The affected area \"sits directly above two producing wellheads\", so a hydrocarbon fire there would lack cooling and coverage over a specific area. The healthy-looking skid hides the gap, and F-1020 on the same quadrant compounds it."
       },
       "urgency": {
         "score": 10,
-        "rationale": "derived 9.7 from impact 10 and likelihood 9, impact weighted; near-certain failure, held at impact 10; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
-      "recommended_action": "Raise a corrective work order to flush the north quadrant branch pipework and clean or replace blocked nozzles, then repeat the full flow test to confirm coverage. Log the impairment in the register and review the nozzle cleaning frequency and marine growth control.",
+      "recommended_action": "Record the north quadrant deluge impairment in the impairment register now with compensatory measures. Rod out or flush the branch pipework, replace the blocked nozzles, and retest the full flow. Then check the F-1020 valve lock-off controls.",
       "review_required": true,
       "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency."
     },
@@ -237,20 +237,20 @@
       "ticket_id": "TKT-1012",
       "finding_id": "F-1012",
       "equipment_id": "LB-4102",
-      "summary": "Freefall lifeboat LB-4102 hydraulic release gear needed significantly more force than spec and moved notchily at class survey. Certificate withheld, craft unavailable. Launch may be prevented, cutting evacuation capacity against POB. Partner LB-4101 condition unverified.",
+      "summary": "Freefall lifeboat LB-4102 hydraulic release gear needed significantly more force than spec and moved notchily at class survey. Certificate withheld, craft declared unavailable. It is a safety critical survival craft, so evacuation capacity is reduced. Partner LB-4101 is unverified.",
       "likelihood_of_failure": {
         "score": 10,
-        "rationale": "Confirmed functional failure: 'Required significantly more force than specification and the movement was notchy', and 'Lifeboat is currently declared unavailable'. The craft cannot currently perform its launch function, so likelihood sits at the top of the range regardless of the reliability score of 8."
+        "rationale": "The finding says the release \"did not operate cleanly\", \"required significantly more force than specification\" and the \"movement was notchy\". The surveyor withheld the certificate and the \"Lifeboat is currently declared unavailable\". This is a confirmed functional failure, so it scores at the top despite reliability 8 of 10 (which would alone suggest low likelihood)."
       },
       "impact_of_failure": {
-        "score": 9,
-        "rationale": "Safety critical survival craft (criticality 10) with a release defect that 'could prevent launch', which reduces total evacuation capacity against POB. N+1 redundancy cannot be credited because 'LB-4101 is not in the registry; its condition cannot be verified'. Scored 9 rather than 10 only because the POB margin is not stated."
+        "score": 10,
+        "rationale": "The finding says the \"Lifeboat is currently declared unavailable\" and the surveyor \"has withheld the certificate\". LB-4102 is a safety critical survival craft (criticality 10) and the defect could prevent launch, so installation evacuation capacity drops against the POB count. The N+1 partner LB-4101 is not in the registry, so no redundancy credit can be given."
       },
       "urgency": {
-        "score": 9,
-        "rationale": "derived 9.3 from impact 9 and likelihood 10, impact weighted; override evacuation_below_pob: evacuation capacity is reduced below the POB count; same compliance logic as an impaired protection layer; urgency at least 9. Band: today."
+        "score": 10,
+        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override evacuation_below_pob: evacuation capacity is reduced below the POB count; same compliance logic as an impaired protection layer; urgency at least 9. Band: today."
       },
-      "recommended_action": "Overhaul the LB-4102 hydraulic release gear and re-test it to class acceptance. Verify LB-4101 condition now. Compare the available evacuation capacity with current POB and apply interim measures if it falls short.",
+      "recommended_action": "Overhaul the hydraulic release gear on LB-4102 (strip, inspect, clean/replace worn parts, restore to spec force), then re-test release and get the class certificate reinstated. Verify LB-4101 condition and check capacity against POB now.",
       "review_required": true,
       "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency. The redundant partner cannot be verified."
     },
@@ -258,20 +258,20 @@
       "ticket_id": "TKT-1013",
       "finding_id": "F-1013",
       "equipment_id": "INST-2150",
-      "summary": "Duty interface level transmitter INST-2150 on V-1201 reads ~12% above backup and ~15% above sight glass, drift growing over three weeks. It controls the vessel and feeds the high level alarm. Backup INST-2151 also has open finding F-1018, so it is not a reliable reference.",
+      "summary": "Duty interface level transmitter INST-2150 on V-1201 reads ~12% above backup and ~15% above sight glass, drifting for three weeks. It drives control and the high level alarm, and backup INST-2151 has its own open finding F-1018.",
       "likelihood_of_failure": {
         "score": 8,
-        "rationale": "Finding states \"Divergence has been growing steadily over about three weeks\" and the reading is \"approximately 12 percent higher than the backup\" and \"around 15 percent higher than the sight glass\": an active, still-moving trend, already out of tolerance versus an independent reference. Registry reliability 6/10 (inverted) gives a moderate baseline, raised by the trend and the engineer's note \"Drifts\". Not scored 10 because no total loss of function is confirmed."
+        "rationale": "Finding says 'Divergence has been growing steadily over about three weeks' and it reads '12 percent higher than the backup' and '15 percent higher than the sight glass'. The trend is still moving and the error is already large, so it is failing its accuracy function now. Reliability 6/10 (inverted) would suggest only moderate, but the active trend raises it. Not a total failure, so not 10."
       },
       "impact_of_failure": {
-        "score": 7,
-        "rationale": "Finding says \"Control is currently on this transmitter\", and the engineer notes it \"Feeds both control and the high level alarm\", so a false reading corrupts control and degrades the alarm protection layer. Redundancy cannot be credited as INST-2151 has open finding F-1018. Operator awareness of the lying transmitter cannot be counted as a control measure. Not an SCE and the consequence is mainly an overfill or carry-over upset, so not top of range."
+        "score": 8,
+        "rationale": "'Control is currently on this transmitter' and the engineer notes it feeds the high level alarm, so a false reading degrades both control and an alarm protection layer. Partner INST-2151 has open finding F-1018, so the pair is not redundant. Operator awareness cannot be credited as a control measure. Not an SCE, and the reading error is partly cross-checkable by sight glass, so not 9-10."
       },
       "urgency": {
-        "score": 7,
-        "rationale": "derived 7.3 from impact 7 and likelihood 8, impact weighted. Band: this week."
+        "score": 8,
+        "rationale": "derived 8.0 from impact 8 and likelihood 8, impact weighted. Band: this week."
       },
-      "recommended_action": "Verify against sight glass and calibrate or replace INST-2150 within the maintenance window. Review F-1018 on INST-2151 in parallel to establish which transmitter is correct. Consider moving control to the healthier leg once verified, and check high level alarm setpoint accuracy.",
+      "recommended_action": "Compare INST-2150 against sight glass and INST-2151 and calibrate or replace it. Review F-1018 first to confirm which leg is trustworthy. Move control to the better leg, and record the alarm impairment in the register until fixed.",
       "review_required": true,
       "review_reason": "The redundant partner also has an open finding; redundancy credit withdrawn."
     },
@@ -279,20 +279,20 @@
       "ticket_id": "TKT-1014",
       "finding_id": "F-1014",
       "equipment_id": "V-1305",
-      "summary": "Test separator V-1305 inlet deflector plate is partly detached after one of four support brackets corroded through, found at shutdown internal visual. Shell and heads are good. Vessel is out of service and bypassable, so no production or safety effect now.",
+      "summary": "Test separator V-1305: inlet deflector plate partly detached after one of four support brackets corroded through; shell and heads are good. Vessel is out of service and bypassable, so the consequence is limited to internals and test performance.",
       "likelihood_of_failure": {
-        "score": 3,
-        "rationale": "Internals are degraded: \"partly detached\" and \"one of the four support brackets has corroded through\", so the deflector function is already compromised. But \"Test separator is not currently in service\" and the shell is \"in good condition\", and reliability 8/10 (reliable) also pulls likelihood down."
+        "score": 2,
+        "rationale": "\"Test separator is not currently in service\" and it \"can be isolated and bypassed indefinitely\", so it is not required to perform a function and cannot fail in service now. Reliability 8 of 10 supports low likelihood. \"partly detached\" and \"corroded through\" show real degradation, which keeps it above the minimum and matters only if it is returned to service unrepaired."
       },
       "impact_of_failure": {
         "score": 2,
-        "rationale": "Criticality 4/10, not an SCE, and the engineer comment says it \"Can be isolated and bypassed indefinitely with no production impact\". The finding is internals only (\"Inlet deflector plate\"), shell and heads \"in good condition\", so there is no pressure boundary concern. Consequence is poor test separation performance if returned to service."
+        "rationale": "Criticality 4 of 10, not an SCE, and the vessel \"can be isolated and bypassed indefinitely with no production impact\". \"Vessel shell and heads in good condition\" means the pressure boundary is unaffected. The consequence is degraded separation or loose debris during well testing, which is low."
       },
       "urgency": {
         "score": 2,
-        "rationale": "derived 2.3 from impact 2 and likelihood 3, impact weighted. Band: backlog."
+        "rationale": "derived 2.0 from impact 2 and likelihood 2, impact weighted. Band: backlog."
       },
-      "recommended_action": "Repair or replace the corroded bracket and re-secure the inlet deflector plate at the next planned shutdown, and check the remaining three brackets for corrosion. Keep V-1305 isolated until the repair is done and signed off.",
+      "recommended_action": "Keep V-1305 isolated. Repair or replace the deflector plate and corroded bracket at the next planned shutdown, inspecting the other three brackets for corrosion. Complete the repair before returning to well testing.",
       "review_required": false,
       "review_reason": null
     },
@@ -300,20 +300,20 @@
       "ticket_id": "TKT-1015",
       "finding_id": "F-1015",
       "equipment_id": "V-2450",
-      "summary": "Level gauge glass on fuel gas scrubber V-2450 is dirty and hard to read. The level transmitter controls normally and nothing suggests liquid carryover. It matters because the scrubber protects turbines from liquid slugs, but this is a local-indication housekeeping issue.",
+      "summary": "Level gauge glass on fuel gas scrubber V-2450 is dirty and hard to read. The transmitter-based level control works normally and there is no carryover downstream. It matters because V-2450 has no redundancy and protects the turbines, but this finding is cosmetic/indication-only.",
       "likelihood_of_failure": {
         "score": 2,
-        "rationale": "Finding says \"Level control appears to be working normally on the transmitter\" and \"No liquid carryover indications downstream\", so the scrubber function is intact. Reliability 7/10 (inverted) supports a low likelihood; only the local gauge reading is degraded, with no active mechanism or trend."
+        "rationale": "Finding says \"Level control appears to be working normally on the transmitter\" and \"No liquid carryover indications downstream\", so the vessel is performing its function. Dirty glass is a visual-clarity issue, not a degrading mechanism. Reliability 7/10 (inverted, fairly reliable) supports a low score."
       },
       "impact_of_failure": {
         "score": 3,
-        "rationale": "Finding is limited to a \"dirty and hard to read\" gauge glass, a visibility/housekeeping matter. Criticality is 7 and there is no redundancy, but the transmitter still provides level indication and control, so consequence of this failure mode is low. Not an SCE and no wall loss or leak is reported."
+        "rationale": "Finding says the gauge glass is \"dirty and hard to read\", which affects a local backup indication only; the transmitter still gives level. Consequence is limited to reduced local verification, though registry shows no redundancy for the scrubber and criticality 7. Not an SCE and no pressure boundary indication, so impact stays low."
       },
       "urgency": {
         "score": 3,
         "rationale": "derived 2.7 from impact 3 and likelihood 2, impact weighted. Band: next planned shutdown."
       },
-      "recommended_action": "Raise a routine work order to clean the gauge glass and confirm the local level reading agrees with the transmitter during the next operator round. Check for any gauge glass weeping or leakage while cleaning.",
+      "recommended_action": "Clean the level gauge glass at the next routine maintenance round and verify the glass reading against the transmitter. If the glass can't be cleaned or the readings disagree, raise a work order to check the transmitter and gauge.",
       "review_required": false,
       "review_reason": null
     },
@@ -321,20 +321,20 @@
       "ticket_id": "TKT-1016",
       "finding_id": "F-1016",
       "equipment_id": "PSV-3420",
-      "summary": "Certification tag on compressor discharge PSV-3420 is illegible from label corrosion. Register confirms recertification March 2025, in date. Valve physically looks fine, no passing or weeping reported. Records/labelling issue on an SCE with no redundancy.",
+      "summary": "Certification tag on compressor discharge PSV-3420 (SCE, no redundancy) is illegible from label corrosion. Register confirms recertification March 2025, in date; valve looks fine. Records/identification issue only; no passing or weeping reported.",
       "likelihood_of_failure": {
         "score": 2,
-        "rationale": "Finding says 'Physical condition of the valve looks fine' and 'recertified in March 2025 so it is in date'; reliability 8/10 (inverted, so low likelihood). No evidence of passing or weeping, so the protection-layer rule is not triggered. The corroded label shows local atmospheric corrosion but is not a functional trend."
+        "rationale": "Finding states 'the valve was recertified in March 2025 so it is in date' and 'Physical condition of the valve looks fine'; reliability 8/10 (inverted gives low likelihood). No weeping or passing noted. Tag corrosion does not indicate valve functional degradation, though visual-only check limits depth."
       },
       "impact_of_failure": {
         "score": 3,
-        "rationale": "The finding touches only the tag: 'Certification tag... is illegible, the label has corroded', a housekeeping/records consequence. The valve is an SCE with no redundancy (criticality 9), but the scope is the consequence of this failure mode, which is loss of label traceability, not loss of relief function. Score is held slightly above minimum for SCE traceability."
+        "rationale": "Finding touches only the label: 'Certification tag... is illegible, the label has corroded.' Consequence is a records/traceability issue, housekeeping scope, even though the valve is an SCE with no redundancy. The valve's protective function is not shown to be affected."
       },
       "urgency": {
         "score": 3,
         "rationale": "derived 2.7 from impact 3 and likelihood 2, impact weighted. Band: next planned shutdown."
       },
-      "recommended_action": "Replace the corroded certification tag on PSV-3420 with a corrosion-resistant one, verified against the March 2025 recertification record. Check adjacent tags/fittings for the same corrosion and note it in the next round.",
+      "recommended_action": "Replace the corroded certification tag on PSV-3420 with a new tag matching the March 2025 recertification record, and check the register ties tag ID to the valve. Check adjacent tags for the same corrosion.",
       "review_required": true,
       "review_reason": "Safety Critical Element: every ticket is checked by a human before it enters the work queue."
     },
@@ -342,20 +342,20 @@
       "ticket_id": "TKT-1017",
       "finding_id": "F-1017",
       "equipment_id": "FW-8101",
-      "summary": "Diesel firewater pump A (SCE) ran up but stabilised at 9.2 barg against 11 barg design, about 16% low, with flow unmeasured. Cause is unclear: impeller wear or a partly closed test-line valve. Partner pump B has open finding F-1003, so there is no backup.",
+      "summary": "Diesel firewater pump A (SCE) started first time but stabilised at 9.2 barg vs 11 barg design on weekly test; flow not measured. Cause is either pump wear or a part-closed test valve. Partner pump FW-8102 has open finding F-1003, so no backup.",
       "likelihood_of_failure": {
         "score": 6,
-        "rationale": "Pump 'started first time' and engine parameters 'all normal', so no start failure. But 'discharge pressure stabilised at 9.2 barg against a design of 11 barg' is a real performance shortfall, and wear would keep progressing. Reliability 7/10 gives a base of about 4, raised for the shortfall. Not scored as a confirmed failure because 'Flow was not measured' and a valve cause is possible."
+        "rationale": "Registry reliability 7/10 gives a low-to-moderate base. Raised because 'discharge pressure stabilised at 9.2 barg against a design of 11 barg' is about 16% below design. If the cause is wear, that is an active mechanism. Not scored higher because 'Engine parameters all normal', it 'started first time', and the cause may be a 'partly closed valve' rather than the pump. There is a single data point and no trend."
       },
       "impact_of_failure": {
         "score": 9,
-        "rationale": "Criticality is 10/10 and the pump is an SCE for fire water supply. 'Both pumps unavailable at once means production shutdown', and partner FW-8102 has open finding F-1003, so redundancy is not credited. A pump that delivers '9.2 barg against a design of 11 barg' may leave the fire protection layer short of design duty. Not 10 because the pump still runs and delivers some pressure."
+        "rationale": "Criticality 10/10 and an SCE protecting against fire escalation. If the pump cannot deliver design pressure on demand, the firewater layer is degraded. Redundancy is not credited because FW-8102 has open finding F-1003. 'Flow was not measured', so the real shortfall in firewater capacity is unknown. Not 10 because the pump did run and delivered substantial pressure."
       },
       "urgency": {
         "score": 9,
         "rationale": "derived 8.1 from impact 9 and likelihood 6, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
-      "recommended_action": "Check the test-line valve line-up now, then repeat the test with flow and pressure measured against the pump curve. If the shortfall persists, plan an internal wear inspection. Log the impairment and review F-1003 on FW-8102 together.",
+      "recommended_action": "Check test line valve line-up and rerun the test with flow and pressure measured against the pump curve. Compare with earlier test data. If the shortfall persists, plan pump internals inspection. Review alongside F-1003 on FW-8102.",
       "review_required": true,
       "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency. The model rated its uncertainty high. The redundant partner also has an open finding; redundancy credit withdrawn."
     },
@@ -363,20 +363,20 @@
       "ticket_id": "TKT-1018",
       "finding_id": "F-1018",
       "equipment_id": "INST-2151",
-      "summary": "Backup interface level transmitter INST-2151 on V-1201 has read a flat line for ~36 h, which is not credible; suspected blocked impulse line or failed sensor. Partner INST-2150 has open finding F-1013, so the duplicated pair is not redundant and the 2021 near-miss arrangement is compromised.",
+      "summary": "Backup interface level transmitter INST-2151 on V-1201 has read a flat line for about 36 hours, so it is not tracking level. Its duplicate partner INST-2150 also has open finding F-1013, so neither leg is a trusted check. Cause unconfirmed: blocked impulse line or sensor failure.",
       "likelihood_of_failure": {
         "score": 9,
-        "rationale": "Finding states \"reading a flat line for approximately 36 hours\" and \"not credible for this service\": a functional failure (loss of valid measurement) has already occurred and persists. Registry reliability 7/10 does not offset an observed failure."
+        "rationale": "Finding says \"reading a flat line for approximately 36 hours\" and \"not credible for this service\", so the transmitter has already stopped doing its job. Registry reliability 7/10 (inverted, low baseline) is overridden by this functional failure. Not 10 only because the cause is still suspected."
       },
       "impact_of_failure": {
         "score": 7,
-        "rationale": "Not an SCE and criticality is 6/10, but the pair was installed after a near miss and partner INST-2150 has open finding F-1013, so \"Duplicated\" cannot be credited. Operators have no validated interface level reading, and operator knowledge of when a transmitter lies is not a written control. Escalation is possible, but unknown process consequence caps the score."
+        "rationale": "Finding says \"Backup interface level transmitter\". The batch note says partner INST-2150 has open finding F-1013, so the pair is not redundant. The second leg was installed after a 2021 near miss, so losing it removes the cross-check on V-1201 interface level. Criticality is 6/10 and it is not an SCE, so impact is scored above that baseline but not at the top."
       },
       "urgency": {
         "score": 8,
         "rationale": "derived 7.6 from impact 7 and likelihood 9, impact weighted. Band: this week."
       },
-      "recommended_action": "Raise urgent work order: check INST-2151 impulse lines (flush/blow down for blockage) and sensor against a local gauge or sight glass, repair. Concurrently review F-1013 on INST-2150 and confirm which leg gives valid level.",
+      "recommended_action": "Verify the actual interface level against the INST-2150 reading and a local gauge or sample. Then check and flush the impulse line and test the sensor on INST-2151. Review F-1013 alongside this, and raise an impairment record if the pair is not both healthy.",
       "review_required": true,
       "review_reason": "The redundant partner also has an open finding; redundancy credit withdrawn."
     },
@@ -384,20 +384,20 @@
       "ticket_id": "TKT-1019",
       "finding_id": "F-1019",
       "equipment_id": "K-3401",
-      "summary": "Loose lagging/cladding on K-3401 second stage discharge line is flapping in wind; a dropped-object hazard, not a process issue. Separate from open F-1001 NDE bearing vibration rise (2.1 to 4.6 mm/s) on same compressor.",
+      "summary": "Loose lagging and flapping cladding on K-3401 second stage discharge line. It is a dropped object hazard and exposes the insulation to weather and possible corrosion under insulation. It does not affect compressor function. Separate open bearing vibration finding F-1001 is unrelated.",
       "likelihood_of_failure": {
-        "score": 3,
-        "rationale": "Finding says \"No process concern\"; the lagging is not affecting compressor function. The cladding is already loose (\"flapping in the wind\") so it may detach, but this is not a failure of the compressor's function. Reliability 7 gives a low baseline; F-1001 vibration is a separate mechanism and not credited here."
+        "score": 6,
+        "rationale": "Cladding 'has come loose and a section of cladding is flapping in the wind' so the mechanism is active and unmitigated, and 'it will end up as a dropped object if left'. Reliability 7/10 gives a low baseline, raised because the loosening has already occurred."
       },
       "impact_of_failure": {
-        "score": 2,
-        "rationale": "Consequence is limited to \"a dropped object if left\" from cladding/lagging, a housekeeping/minor personnel and equipment hazard, not loss of the train. Criticality 10 is not the driver because the finding touches only lagging, and \"No process concern\" is stated. Slight lift above minimum for dropped-object potential."
+        "score": 3,
+        "rationale": "The finding says 'No process concern', so there is no link to compressor trip or export loss, and criticality 10 does not apply to this failure mode. Consequence is a dropped object or personnel hazard plus possible hidden corrosion under insulation. Both are limited in scope, so the score is low-moderate."
       },
       "urgency": {
-        "score": 2,
-        "rationale": "derived 2.3 from impact 2 and likelihood 3, impact weighted. Band: backlog."
+        "score": 4,
+        "rationale": "derived 3.9 from impact 3 and likelihood 6, impact weighted. Band: next planned shutdown."
       },
-      "recommended_action": "Raise a work order to re-secure or remove the loose cladding and lagging on the second stage discharge line, and barricade or check the area below until done. Pair the scaffold access with the F-1001 bearing review if practical.",
+      "recommended_action": "Raise a work order to re-secure or replace the cladding and lagging on the second stage discharge line. Barrier off the area below until done. Inspect the exposed insulation and pipe for wet insulation or corrosion under insulation.",
       "review_required": false,
       "review_reason": null
     },
@@ -405,41 +405,41 @@
       "ticket_id": "TKT-1020",
       "finding_id": "F-1020",
       "equipment_id": "DEL-8300",
-      "summary": "Deluge branch valve to the north quadrant of the wellhead area was found chained closed, untagged and not in the impairment register; duration unknown. It was reopened. F-1011 (10 Jun) found 12 of 60 north nozzles with no or distorted flow. Coverage was likely lost.",
+      "summary": "Deluge branch isolation valve to the north quadrant of the wellhead area was found chained closed, untagged and not in the impairment register; reopened. Duration unknown. Same quadrant had ~12 of 60 nozzles failing in F-1011 (2026-06-10). SCE with no redundancy.",
       "likelihood_of_failure": {
         "score": 9,
-        "rationale": "Valve \"found chained in the closed position\" with \"Unknown how long it had been shut\" means the branch could not deliver when required, a confirmed loss of function. F-1011 shows \"12 of the 60 nozzles in the north quadrant\" with no or distorted flow, so the same area is still degraded after reopening. Reliability 6/10 gives a mid starting point; the findings push it to the top of the range."
+        "rationale": "Quote: \"found chained in the closed position with no valve status tag and no entry in the impairment register\". A closed isolation valve means the north quadrant deluge would not have delivered, so a functional failure of the branch existed until reopened. Shut for an unknown duration, and it compounds F-1011 (\"12 of the 60 nozzles in the north quadrant\" no flow or distorted), a repeat of impaired north quadrant coverage. Valve is now open, so not scored 10, but the branch is still degraded by nozzle blockage and the control that allowed the closure is unproven."
       },
       "impact_of_failure": {
         "score": 10,
-        "rationale": "Safety Critical Element, criticality 10, redundancy \"None\", protecting the wellhead area against hydrocarbon fire escalation. The finding says the valve was \"chained in the closed position with no valve status tag and no entry in the impairment register\", so the protection layer was impaired and hidden from the control room. Combined with the blocked nozzles in F-1011, north quadrant coverage may be inadequate."
+        "rationale": "Quote: \"Isolation valve on the deluge branch line to the north quadrant\". Deluge on the wellhead area is a Safety Critical Element (criticality 10, redundancy \"None\") protecting against a hydrocarbon fire or escalation at the wellheads. Loss of the branch degrades a protection layer with no backup, and the nozzle defects from F-1011 in the same quadrant mean no partner or margin to absorb it. The hidden, unrecorded closure also points to a gap in impairment control."
       },
       "urgency": {
         "score": 10,
         "rationale": "derived 9.7 from impact 10 and likelihood 9, impact weighted; near-certain failure, held at impact 10; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
-      "recommended_action": "Raise an impairment register entry for the closure period and the 12 blocked nozzles. Inspect all deluge isolation valves for locked or closed positions. Clear the north quadrant nozzles and retest flow. Investigate who chained the valve and why.",
+      "recommended_action": "Raise a priority work order to reverify deluge flow and spray pattern in the north quadrant after reopening, clean or replace the ~12 defective nozzles from F-1011, and investigate who chained the valve and why. Lock-open and tag the valve, and review valve status checks.",
       "review_required": true,
-      "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency."
+      "review_reason": "Urgency is in the today band. Safety Critical Element: every ticket is checked by a human before it enters the work queue. An escalation override set the urgency. The model rated its uncertainty high."
     },
     {
       "ticket_id": "TKT-1021",
       "finding_id": "F-1021",
       "equipment_id": "V-1201",
-      "summary": "Damp, stained insulation and rust staining from under cladding at the manway of V-1201, the first stage separator (SCE, no redundancy). Suggests active corrosion under insulation or a leak at the pressure boundary. Hidden wall condition unknown; no measurement yet.",
+      "summary": "Damp, stained insulation and rust staining from under cladding at the manway on V-1201, the first stage separator (SCE, no redundancy). Suggests active corrosion under insulation or leak at the pressure boundary; wall condition unknown, found visually only.",
       "likelihood_of_failure": {
         "score": 6,
-        "rationale": "Registry reliability 8 (inverted, baseline low likelihood) is raised by \"damp and stained around the manway area\" and \"rust staining running down from under the cladding\": wet insulation implies an active, unmitigated corrosion under insulation mechanism progressing now, found only visually from outside. No wall measurement exists and \"Cannot see the pipework underneath\" so extent is unknown. No functional failure confirmed, and the thick wall gives margin, so not higher."
+        "rationale": "Registry reliability 8 of 10 gives a low baseline (about 3), but \"damp and stained around the manway area\" with \"rust staining running down from under the cladding\" indicates an active, unmitigated mechanism (corrosion under wet insulation or a weep). Visual detection means only late-stage signs show, and \"Cannot see\" beneath means no wall thickness data. No failure is confirmed and thick wall gives margin, so not higher."
       },
       "impact_of_failure": {
         "score": 9,
-        "rationale": "Criticality 9, SCE, no redundancy. The vessel is \"the pressure boundary for the entire first stage\" so loss of containment of hydrocarbon could escalate to a major accident. Wall loss or weeping at the manway would degrade a protection layer and consequences are hidden until it fails. Engineer comment says any indication of wall loss or weeping goes to the integrity engineer."
+        "rationale": "Criticality 9 of 10, SCE, registry redundancy \"None\", and the engineer notes it is \"the pressure boundary for the entire first stage\". Loss of containment of hydrocarbons at a manway has major accident and escalation potential. The hidden CUI consequence is delayed, and any wall loss or weeping goes to the integrity engineer regardless of size."
       },
       "urgency": {
         "score": 8,
         "rationale": "derived 8.1 from impact 9 and likelihood 6, impact weighted. Band: this week."
       },
-      "recommended_action": "Strip insulation and cladding around the manway and rust track path, inspect visually and for leaks, then UT thickness mapping and CUI assessment of shell and nozzle. Check for weeping at the manway gasket. Reinstate with sealed insulation.",
+      "recommended_action": "Route to integrity engineer. Strip insulation and cladding at the manway and below, inspect for leaks and corrosion, take UT wall thickness readings, check manway gasket and bolting, and reinstate insulation. Monitor for weeping until done.",
       "review_required": true,
       "review_reason": "Safety Critical Element: every ticket is checked by a human before it enters the work queue. The model rated its uncertainty high."
     }

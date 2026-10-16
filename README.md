@@ -28,7 +28,10 @@ and the prompt, so a rerun with nothing changed costs nothing.
 
 ## Files
 
-- `triage.py`: the whole pipeline, top to bottom in run order.
+- `triage.py`: main and arguments.
+- `steps.py`: the seven steps, top to bottom in run order.
+- `models.py`: the input, model-reply and ticket shapes.
+- `loaders.py`: csv, `.env` and rules file.
 - `rules.yml`: the handover notes and registry comments as one file an
   integrity engineer edits. Every bullet names its source.
 - `DESIGN.md`: decisions in the order they were made, and the answers to

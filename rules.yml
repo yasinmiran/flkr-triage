@@ -9,8 +9,8 @@
 #
 # Two readers: the model gets `general`, `registry_scores` and the matching
 # `by_equipment_type` section rendered as text. The code reads
-# `protection_layer_types`, `evacuation_types`, `urgency_bands` and, once
-# steps 5 and 6 done, the urgency constants and review rules.
+# `protection_layer_types`, `evacuation_types`, `urgency_bands`, `urgency`
+# and `overrides`. Review triggers are code (steps.py, review).
 
 version: 1
 source: domain_knowledge.md and equipment_registry.csv engineer_comment
@@ -168,5 +168,3 @@ overrides:
     condition: evacuation capacity is reduced below the POB count            # notes: Urgency
     reason: same compliance logic as an impaired protection layer
     floor: 9
-
-# Urgency function constants and review rules are added with steps 5 and 6.
