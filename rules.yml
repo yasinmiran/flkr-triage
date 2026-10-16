@@ -43,6 +43,7 @@ general:
 
   impact:                                                                  # notes: The two questions
     concerns: what happens if it does fail; depends on what the equipment does and what sits behind it, not on the wording of the finding
+    scope: the consequence of the failure mode this finding points to, not the worst thing this equipment could ever do; a finding that touches only appearance, labels or records has housekeeping consequences even on a critical item   # INFERRED from the down list below; first run scored an illegible PSV tag impact 8
     up:
       - absence of redundancy                                              # notes: What moves impact
       - a Safety Critical Element, judged against the major accident it protects against, not repair cost   # notes: What moves impact

@@ -1,6 +1,7 @@
 import argparse
 import csv
 import hashlib
+import json
 import os
 import re
 import sys
@@ -12,7 +13,7 @@ from pathlib import Path
 
 import anthropic
 from anthropic.types import JSONOutputFormatParam, MessageParam, OutputConfigParam
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, ValidationError
 from typing import Literal, cast
 
 import yaml
@@ -146,11 +147,24 @@ def main(argv=None):
     annotate_batch(cases, registry, findings_by_equipment)
     rules_path = Path(__file__).with_name("rules.yml")
     rules_text = rules_path.read_text()
-    rules = yaml.safe_load(rules_path.read_text())
+    rules = yaml.safe_load(rules_text)
     client = anthropic.Anthropic()
-    text = ask_model(client, system_prompt(rules), user_prompt(cases[2], rules), rules_text)
-    print(text)
+    assessments: dict[str, Assessment | None] = {}
+    for case in cases:
+        a = assess(client, case, rules, rules_text)
+        assessments[case.finding.finding_id] = a
+        if a is None:
+            print(case.finding.finding_id, "FAILED")
+        else:
+            print(f"{case.finding.finding_id} L={a.likelihood_of_failure.score} I={a.impact_of_failure.score} "
+                  f"cf={a.confirmed_failure} oos={a.out_of_service} pli={a.protection_layer_impaired} "
+                  f"dev={a.deviation_recorded} evac={a.evacuation_capacity_reduced} unc={a.uncertainty}")
     return 0
+
+
+UNSUPPORTED_SCHEMA_KEYS = {"minimum", "maximum", "minLength", "maxLength", "exclusiveMinimum", "exclusiveMaximum",
+                           "title"}
+
 
 def api_schema(node: object) -> object:
     if isinstance(node, dict):
@@ -159,13 +173,14 @@ def api_schema(node: object) -> object:
         return [api_schema(i) for i in node]
     return node
 
+
 MODEL = "claude-sonnet-5-5"
 CACHE_DIR = Path(__file__).with_name(".cache")
-UNSUPPORTED_SCHEMA_KEYS = {"minimum", "maximum", "minLength", "maxLength", "exclusiveMinimum", "exclusiveMaximum", "title"}
 SCHEMA: dict[str, object] = cast(dict[str, object], api_schema(Assessment.model_json_schema()))
 
-def ask_model(client: anthropic.Anthropic, system: str, user: str, rules_text: str) -> str:
-    key = hashlib.sha256(f"{MODEL}\n{rules_text}\n{system}\n{user}".encode()).hexdigest()
+
+def ask_model(client: anthropic.Anthropic, system: str, messages: list[MessageParam], rules_text: str) -> str:
+    key = hashlib.sha256(f"{MODEL}\n{rules_text}\n{system}\n{json.dumps(messages)}".encode()).hexdigest()
     cached = CACHE_DIR / f"{key}.json"
     if cached.exists():
         return cached.read_text()
@@ -173,13 +188,30 @@ def ask_model(client: anthropic.Anthropic, system: str, user: str, rules_text: s
         model=MODEL,
         max_tokens=1500,
         system=system,
-        messages=[MessageParam(role="user", content=user)],
+        messages=messages,
         output_config=OutputConfigParam(format=JSONOutputFormatParam(type="json_schema", schema=SCHEMA)),
     )
     text = next(block.text for block in response.content if block.type == "text")
     CACHE_DIR.mkdir(exist_ok=True)
     cached.write_text(text)
     return text
+
+
+MAX_ATTEMPTS = 3
+
+
+def assess(client: anthropic.Anthropic, case: Case, rules: dict, rules_text: str) -> Assessment | None:
+    system = system_prompt(rules)
+    messages: list[MessageParam] = [MessageParam(role="user", content=user_prompt(case, rules))]
+    for _ in range(MAX_ATTEMPTS):
+        text = ask_model(client, system, messages, rules_text)
+        try:
+            return Assessment.model_validate_json(text)
+        except ValidationError as error:
+            messages.append(MessageParam(role="assistant", content=text))
+            messages.append(MessageParam(role="user",
+                                         content=f"That response failed validation:\n{error}\nReturn a corrected response."))
+    return None
 
 
 def load_dotenv(path: Path) -> None:
