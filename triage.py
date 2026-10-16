@@ -7,13 +7,13 @@ import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime, timezone
 from enum import Enum
 from pathlib import Path
 
 import anthropic
 from anthropic.types import JSONOutputFormatParam, MessageParam, OutputConfigParam
-from pydantic import BaseModel, Field, ConfigDict, ValidationError
+from pydantic import BaseModel, Field, ConfigDict, ValidationError, model_validator
 from typing import Literal, cast
 
 import yaml
@@ -134,9 +134,36 @@ class Verdict:
     violations: list[str] = field(default_factory=list)
 
 
+class Ticket(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    ticket_id: str = Field(pattern=r"^TKT-\d{4}$")
+    finding_id: str
+    equipment_id: str
+    summary: str = Field(min_length=1, max_length=300)
+    likelihood_of_failure: ScoredDimension
+    impact_of_failure: ScoredDimension
+    urgency: ScoredDimension
+    recommended_action: str = Field(min_length=1, max_length=300)
+    review_required: bool
+    review_reason: str | None
+
+    @model_validator(mode="after")
+    def reason_when_required(self) -> "Ticket":
+        if self.review_required and not self.review_reason:
+            raise ValueError("review_reason is requis true")
+        return self
+
+
+class TicketFile(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    generated_at: str
+    tickets_generated: int
+    tickets: list[Ticket]
+
+
 def main(argv=None):
     load_dotenv(Path(__file__).with_name(".env"))
-    registry_path, findings_path = parse_args(argv)
+    registry_path, findings_path, output_path = parse_args(argv)
     registry_rows = load_csv(registry_path)
     findings_rows = load_csv(findings_path)
     equipments = [Equipment.from_row(row) for row in registry_rows]
@@ -155,26 +182,32 @@ def main(argv=None):
     rules_text = rules_path.read_text()
     rules = yaml.safe_load(rules_text)
     client = anthropic.Anthropic()
-    verdicts: dict[str, Verdict] = {}
+    tickets: list[Ticket] = []
+    failed = 0
     for case in cases:
-        v = assess(client, case, rules, rules_text)
-        verdicts[case.finding.finding_id] = v
-        a = v.assessment
-        if a is None:
-            print(case.finding.finding_id, "FAILED", v.violations)
-            continue
-        score, reasons = urgency(a, case, rules)
-        score, fired = apply_overrides(score, reasons, a, case, rules)
-        required, reason = review(a, case, v, fired)
-        print(f"{case.finding.finding_id} L={a.likelihood_of_failure.score} I={a.impact_of_failure.score} "
-              f"U={score} cf={a.confirmed_failure} oos={a.out_of_service} pli={a.protection_layer_impaired} "
-              f"dev={a.deviation_recorded} evac={a.evacuation_capacity_reduced} unc={a.uncertainty} "
-              f"violations={v.violations} {fired} review={required} ")
-    return 0
+        verdict = assess(client, case, rules, rules_text)
+        if verdict.assessment is None:
+            failed += 1
+        tickets.append(build_ticket(case, verdict, rules))
+    output = TicketFile(
+        generated_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        tickets_generated=len(tickets),
+        tickets=tickets,
+    )
+    output_path.write_text(output.model_dump_json(indent=2) + "\n")
+    print(f"wrote {len(tickets)} tickets to {output_path}" + (f", {failed} failed triage" if failed else ""))
+    return 1 if failed else 0
 
 
 UNSUPPORTED_SCHEMA_KEYS = {"minimum", "maximum", "minLength", "maxLength", "exclusiveMinimum", "exclusiveMaximum",
                            "title"}
+
+
+def band_name(score: int, rules: dict) -> str:
+    for name, (low, high) in rules["urgency_bands"].items():
+        if low <= score <= high:
+            return name.replace("_", " ")
+    sys.exit(f"error: urgency {score} is outside every band")
 
 
 def api_schema(node: object) -> object:
@@ -305,6 +338,34 @@ def review(a: Assessment, case: Case, verdict: Verdict, fired: list[str]) -> tup
     if any(n.kind is NoteKind.PARTNER_UNVERIFIED for n in case.notes):
         reasons.append("The redundant partner cannot be verified.")
     return bool(reasons), " ".join(reasons) or None
+
+
+def build_ticket(case: Case, verdict: Verdict, rules: dict) -> Ticket:
+    f, eq = case.finding, case.equipment
+    ticket_id = "TKT-" + f.finding_id.removeprefix("F-")
+    a = verdict.assessment
+    if a is None:
+        failed = ScoredDimension(score=10, rationale="Triage failed; human assessment required.")
+        return Ticket(
+            ticket_id=ticket_id, finding_id=f.finding_id, equipment_id=eq.equipment_id,
+            summary=f"Finding {f.finding_id} on {eq.equipment_id} ({eq.equipment_type}) could not be triaged automatically; human assessment required.",
+            likelihood_of_failure=failed, impact_of_failure=failed, urgency=failed,
+            recommended_action="Assign to the duty integrity engineer for manual triage.",
+            review_required=True, review_reason="Automatic triage failed: " + "; ".join(verdict.violations) + ".",
+        )
+    urgency_score, reasons = urgency(a, case, rules)
+    urgency_score, fired = apply_overrides(urgency_score, reasons, a, case, rules)
+    required, reason = review(a, case, verdict, fired)
+    return Ticket(
+        ticket_id=ticket_id, finding_id=f.finding_id, equipment_id=eq.equipment_id,
+        summary=a.summary,
+        likelihood_of_failure=a.likelihood_of_failure,
+        impact_of_failure=a.impact_of_failure,
+        urgency=ScoredDimension(score=urgency_score,
+                                rationale="; ".join(reasons) + f". Band: {band_name(urgency_score, rules)}."),
+        recommended_action=a.recommended_action,
+        review_required=required, review_reason=reason,
+    )
 
 
 def load_dotenv(path: Path) -> None:
@@ -442,13 +503,15 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(description="Triage inspection findings against the equipment registry.")
     parser.add_argument("registry", nargs="?", default=DEFAULT_REGISTRY, help="equipment registry CSV")
     parser.add_argument("findings", nargs="?", default=DEFAULT_FINDINGS, help="inspection findings CSV")
+    parser.add_argument("output", nargs="?", default="tickets.json", help="where to write the tickets")
     args = parser.parse_args(argv)
     registry_path = Path(args.registry).expanduser().resolve()
     findings_path = Path(args.findings).expanduser().resolve()
+    output_path = Path(args.output).expanduser().resolve()
     for p in (registry_path, findings_path):
         if not p.is_file():
             sys.exit(f"error: file not found: {p}")
-    return registry_path, findings_path
+    return registry_path, findings_path, output_path
 
 
 def load_csv(path):
