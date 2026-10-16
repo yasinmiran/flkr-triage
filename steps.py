@@ -228,6 +228,7 @@ def assess(client: anthropic.Anthropic, case: Case, rules: dict, rules_text: str
     system = system_prompt(rules)
     messages: list[MessageParam] = [MessageParam(role="user", content=user_prompt(case, rules))]
     invariants_retried = False
+    last_valid: Verdict | None = None
     for _ in range(MAX_ATTEMPTS):
         try:
             text = ask_model(client, system, messages, rules_text)
@@ -241,14 +242,15 @@ def assess(client: anthropic.Anthropic, case: Case, rules: dict, rules_text: str
                                          content=f"That response failed validation:\n{error}\nReturn a corrected response."))
             continue
         violations = invariant_violations(assessment, case)
+        last_valid = Verdict(assessment, violations)
         if violations and not invariants_retried:
             invariants_retried = True
             messages.append(MessageParam(role="assistant", content=text))
             messages.append(MessageParam(role="user", content="The scores contradict the flags:\n- " + "\n- ".join(
                 violations) + "\nReconsider and return a corrected response."))
             continue
-        return Verdict(assessment, violations)
-    return Verdict(None, ["no valid response after retries"])
+        return last_valid
+    return last_valid or Verdict(None, ["no valid response after retries"])
 
 
 def invariant_violations(a: Assessment, case: Case) -> list[str]:
