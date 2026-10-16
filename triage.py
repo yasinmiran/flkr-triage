@@ -1,5 +1,7 @@
 import argparse
 import csv
+import hashlib
+import os
 import re
 import sys
 from collections import defaultdict
@@ -7,8 +9,11 @@ from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
 from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import Literal
+
+import anthropic
+from anthropic.types import JSONOutputFormatParam, MessageParam, OutputConfigParam
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Literal, cast
 
 import yaml
 
@@ -98,11 +103,13 @@ class Case:
 
 
 class ScoredDimension(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     score: int = Field(ge=1, le=10)
     rationale: str = Field(min_length=1)
 
 
 class Assessment(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     summary: str = Field(min_length=1, max_length=300)
     likelihood_of_failure: ScoredDimension
     impact_of_failure: ScoredDimension
@@ -121,6 +128,7 @@ class Assessment(BaseModel):
 
 
 def main(argv=None):
+    load_dotenv(Path(__file__).with_name(".env"))
     registry_path, findings_path = parse_args(argv)
     registry_rows = load_csv(registry_path)
     findings_rows = load_csv(findings_path)
@@ -136,13 +144,51 @@ def main(argv=None):
         findings_by_equipment[finding.equipment_id].append(finding)
         cases.append(Case(finding=finding, equipment=eq))
     annotate_batch(cases, registry, findings_by_equipment)
-    rules = load_rules(Path(__file__).with_name("rules.yml"))
-    print(user_prompt(cases[2], rules))
+    rules_path = Path(__file__).with_name("rules.yml")
+    rules_text = rules_path.read_text()
+    rules = yaml.safe_load(rules_path.read_text())
+    client = anthropic.Anthropic()
+    text = ask_model(client, system_prompt(rules), user_prompt(cases[2], rules), rules_text)
+    print(text)
     return 0
 
+def api_schema(node: object) -> object:
+    if isinstance(node, dict):
+        return {k: api_schema(v) for k, v in node.items() if k not in UNSUPPORTED_SCHEMA_KEYS}
+    if isinstance(node, list):
+        return [api_schema(i) for i in node]
+    return node
 
-def load_rules(path: Path) -> dict:
-    return yaml.safe_load(path.read_text())
+MODEL = "claude-sonnet-5-5"
+CACHE_DIR = Path(__file__).with_name(".cache")
+UNSUPPORTED_SCHEMA_KEYS = {"minimum", "maximum", "minLength", "maxLength", "exclusiveMinimum", "exclusiveMaximum", "title"}
+SCHEMA: dict[str, object] = cast(dict[str, object], api_schema(Assessment.model_json_schema()))
+
+def ask_model(client: anthropic.Anthropic, system: str, user: str, rules_text: str) -> str:
+    key = hashlib.sha256(f"{MODEL}\n{rules_text}\n{system}\n{user}".encode()).hexdigest()
+    cached = CACHE_DIR / f"{key}.json"
+    if cached.exists():
+        return cached.read_text()
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=1500,
+        system=system,
+        messages=[MessageParam(role="user", content=user)],
+        output_config=OutputConfigParam(format=JSONOutputFormatParam(type="json_schema", schema=SCHEMA)),
+    )
+    text = next(block.text for block in response.content if block.type == "text")
+    CACHE_DIR.mkdir(exist_ok=True)
+    cached.write_text(text)
+    return text
+
+
+def load_dotenv(path: Path) -> None:
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        if line.strip() and not line.startswith("#") and "=" in line:
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip())
 
 
 def system_prompt(rules: dict) -> str:
@@ -179,7 +225,8 @@ def user_prompt(case: Case, rules: dict) -> str:
             f"reported by: {f.reporter_role}",
             f"description: {f.finding_description}",
         ]),
-        "Score likelihood and impact for this finding. In each rationale, quote the measurement or phrase from the finding it rests on.",
+        "Score likelihood and impact for this finding. In each rationale, quote the measurement or phrase from the finding it rests on. ",
+        "Keep summary and recommended_action to at most 300 characters each.",
     ])
 
 
