@@ -164,7 +164,8 @@ measurement, the repeat and the partner. two fixes. F-1005 summary said
 "effectively 1oo2"; the notes logic (next failure defeats it) means
 2oo2, so the VOTED_GROUP note now says that. F-1007 sat at urgency 9
 with no review (not SCE, no override), so i added the today-band
-trigger.
+trigger. in the committed run F-1007 scored 8 and F-1004 took the
+trigger instead; the rule is the point, not the ticket.
 
 33. per client: everything platform specific is meant to live in
 `rules.yml`. the redundancy string patterns are still code and would
@@ -215,7 +216,7 @@ urgency numbers, overrides). every bullet names its source.
 the code picks the section for the case's `equipment_type` (a dict
 lookup) and renders it as text into the prompt, with the engineer
 comment verbatim and the batch notes. no retrieval. two pages fit in
-context; rag here would be theatre.
+context; retrieval would add a step with nothing to retrieve.
 
 why this: two readers need the same knowledge. the model reads prose.
 the code reads lists. one file both can read, and an integrity engineer
@@ -224,7 +225,7 @@ can edit yaml and cant edit python.
 six months later, psv findings need scoring differently: edit the
 `Pressure Safety Valve` section in `rules.yml`. no prompt, no code. only
 psv prompts change. i did exactly this once already (point 26): one line
-in the file, two tickets fixed, nothing else moved.
+in the file, two tickets fixed, nothing else edited.
 
 **C. urgency**
 
@@ -293,16 +294,14 @@ F-1014 urgency 3 -> 2. band counts before: 3 at 10, 6 at 9, 6 at 8, 1 at
 and evacuation case. no ticket crossed between "routine" and "serious";
 the moves are inside those groups. this is what the notes call "the same
 finding scored differently on different days", and the honest answer is:
-the model drifts by about a point, the cache keeps a run stable, the
-human reviews the ones that matter, and the floors and caps in code are
-what hold the override cases: the floors held on every protection layer
-and evacuation ticket. drift did move `review_required` twice at the
-today-band boundary, so the review decision is not immune; the override
-cases are.
+the model drifts by about a point, the cache keeps a run stable, and the
+override floors held on every protection layer and evacuation ticket.
+drift did move `review_required` twice at the today-band boundary, so
+the review decision is not immune; the override cases are.
 
 the measurement itself: i told an agent to clear the cache, rerun, and
 fetch me the diff while i was working on something else. the numbers
-above are what it brought back; i checked them against the two files.
+above are what it brought back.
 
 **assumptions**
 
@@ -322,7 +321,7 @@ above are what it brought back; i checked them against the two files.
 
 **ai assistance**
 
-i used an llm for two things and reviewed both.
+i used an llm for three things and reviewed all of them.
 
 - `rules.yml` first draft, from the notes and the registry comments.
   i checked every bullet against the source. overridden: the first
@@ -331,8 +330,9 @@ i used an llm for two things and reviewed both.
   section from the engineer comments. a crane bullet said "discard
   criterion", which came from the findings file not the registry, cut.
   the `scope` line under impact is mine, added after the first run.
-- an agent in the loop while coding, as a pair. every function was typed
-  in and read by me. overridden: it proposed `temperature=0`, which the
+- an agent in the loop while coding, as a pair. most functions i typed
+  in; the file split and the fixes from the review pass it applied as
+  patches that i approved one by one and read. overridden: it proposed `temperature=0`, which the
   sdk doesnt have; it proposed `content[0].text`, which crashes on a
   thinking block; it proposed truncating summaries to 300 chars, i made
   it a validation error with a retry instead.
