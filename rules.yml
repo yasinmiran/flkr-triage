@@ -1,0 +1,165 @@
+# Triage rules for the Bravo platform.
+#
+# Every line names its source in a trailing comment:
+#   notes     = domain_knowledge.md, section named
+#   brief     = README.md, section 3 definitions
+#   registry  = equipment_registry.csv engineer_comment, equipment id named
+#   INFERRED  = not stated in any source; a choice made here
+# Nothing comes from the findings file.
+#
+# Two readers: the model gets `general`, `registry_scores` and the matching
+# `by_equipment_type` section rendered as text. The code reads
+# `protection_layer_types`, `evacuation_types`, `urgency_bands` and, once
+# steps 5 and 6 done, the urgency constants and review rules.
+
+version: 1
+source: domain_knowledge.md and equipment_registry.csv engineer_comment
+
+registry_scores:                                                           # notes: Registry scores
+  criticality_score:
+    range: [1, 10]
+    direction: normal        # 10 = most critical
+    starting_point_for: impact
+  reliability_score:
+    range: [1, 10]
+    direction: inverted      # 10 = highly reliable, 1 = fails frequently
+    starting_point_for: likelihood
+    warning: runs opposite to likelihood; new starters routinely invert it
+  note: neither is sufficient alone; the finding text moves both. A reliable item with a crack in it is still cracked.
+
+general:
+  likelihood:                                                              # notes: The two questions
+    concerns: the item itself, given what the inspection found; how likely it is to stop performing its function in the near term
+    up:
+      - a trend that is still moving                                       # notes: What moves likelihood
+      - a repeat of a failure that has already occurred this period        # notes: What moves likelihood
+      - an active, unmitigated mechanism; corrosion under wet insulation is progressing now   # notes: What moves likelihood
+      - detection by a method that only catches late-stage damage; a finding heard or smelled is further advanced than one found by UT   # notes: What moves likelihood
+      - a confirmed functional failure that has already occurred sits at the top of the range   # brief: likelihood definition
+    down:
+      - design margin                                                      # notes: What moves likelihood
+      - a measurement inside its acceptance criterion                      # notes: What moves likelihood
+      - an item that is out of service and not required to be in service  # notes: What moves likelihood
+
+  impact:                                                                  # notes: The two questions
+    concerns: what happens if it does fail; depends on what the equipment does and what sits behind it, not on the wording of the finding
+    up:
+      - absence of redundancy                                              # notes: What moves impact
+      - a Safety Critical Element, judged against the major accident it protects against, not repair cost   # notes: What moves impact
+      - a failure that degrades a protection layer rather than causing direct loss   # notes: What moves impact
+      - delayed or hidden consequences; loss of corrosion inhibitor has no effect today and a substantial effect in eighteen months   # notes: What moves impact
+      - escalation potential                                               # notes: What moves impact
+    down:
+      - redundancy that is available and capable; if findings exist against both legs of a pair in the same period, the pair is not redundant   # notes: What moves impact, Two recurring errors
+      - an item that can be bypassed without loss of function              # notes: What moves impact
+      - atmospheric, non-hydrocarbon, low-energy service                   # notes: What moves impact
+      - consequences limited to housekeeping or appearance                 # notes: What moves impact
+
+  pitfalls:
+    - scoring by how severe the description sounds                        # notes: The two questions
+    - inverting reliability_score                                          # notes: Registry scores
+    - crediting redundancy without checking the partner; a partner with a finding this period is not a backup   # notes: Two recurring errors
+    - treating one head lost from a voted group as a defeat; it is a degradation, impact moderate, and time-limited because the next failure defeats it   # notes: Two recurring errors
+    - resolving uncertainty by picking a mid-range score                   # notes: Output expectations
+
+  output:                                                                  # notes: Output expectations
+    summary:
+      must_cover: [what is wrong, on what, why it matters]
+      readable_without_inspection_record: true
+      not_a_restatement_of_finding_text: true
+      must_not_omit: [a measurement, a repeat occurrence, a standby already unavailable]
+    recommended_action: names a specific activity; "investigate further" is not sufficient   # brief: section 3
+    uncertainty: state it explicitly; never resolve it with a mid-range score
+    loss_of_confidence_causes:    # ordered, worst first
+      - confidently incorrect scores on safety critical equipment
+      - a summary that omits a decision-changing detail
+      - the same finding scored differently on different days
+      - uniform mid-range scores across all findings
+
+# Keys must match equipment_type in the registry exactly; the code selects by it.
+by_equipment_type:
+  Centrifugal Compressor:
+    - single train, no spare, no workaround; a trip puts the platform on recycle and cuts production within the hour   # registry: K-3401
+    - vibration is trended daily; anything unusual gets a specialist the same day   # registry: K-3401
+    - a bearing with a vibration trend that has not plateaued is high likelihood   # notes: The two questions
+
+  Reciprocating Pump:
+    - on corrosion inhibitor duty, losing the pump does not stop production, but inhibitor starvation starts corrosion in downstream carbon steel within weeks   # registry: P-3305
+    - the consequence lands six months later on someone else's desk; a delayed consequence still moves impact up   # registry: P-3305, notes: What moves impact
+
+  Pressure Vessel:
+    - a hairline coating blister on a thick-walled vessel is low likelihood even on a critical vessel   # notes: The two questions
+    - on a pressure boundary vessel, any indication of wall loss, cracking or weeping goes to the integrity engineer regardless of size   # registry: V-1201
+    - a vessel only used during well testing, which can be isolated and bypassed indefinitely with no production impact, can usually wait for the next planned shutdown   # registry: V-1305
+
+  Pressure Safety Valve:
+    - any evidence of passing or weeping is an impairment of a protection layer, not a maintenance nuisance   # registry: PSV-1310, PSV-3420
+    - a regulatory clock runs on an impaired relief device from the moment it is known   # registry: PSV-1310
+
+  Gas Detector:
+    - calibration drift from salt and humidity is common and mostly benign; a head that fails to respond to test gas is not benign   # registry: FG-0455
+    - in a voted group, one failed head is degradation with no margin left   # notes: Two recurring errors
+
+  Level Transmitter:
+    - duty and backup are a duplicated pair installed after a near miss; keeping both legs healthy is the whole point   # registry: INST-2150, INST-2151
+    - operators knowing when a transmitter lies is not a control measure that can be written down   # registry: INST-2150
+
+  Firewater Pump:
+    - failure to start on demand is the scenario the whole fire protection philosophy is built to avoid   # registry: FW-8101
+    - both pumps unavailable at once means production shutdown              # registry: FW-8101
+    - battery and starting air problems recur on the older pump; it is historically the first to fail a test start   # registry: FW-8102
+
+  Deluge System:
+    - partial nozzle blockage reduces coverage over a specific area; the system looks healthy from the skid but is not delivering where it matters   # registry: DEL-8300
+
+  Lifeboat:
+    - any defect that could prevent launch reduces the total evacuation capacity, which is compared against the POB count; that comparison is not negotiable   # registry: LB-4102
+
+  Pedestal Crane:
+    - wire rope and hook inspections are governed by the lifting standard, a separate certification regime   # registry: CR-5001
+    - out of service means no supply boat offloads, a logistics problem within days   # registry: CR-5001
+
+  HVAC Unit:
+    - the temporary refuge pressurisation unit keeps people mustering there from breathing hydrocarbons during a gas release; it is not building services   # registry: HVAC-7201
+
+  Structure:
+    - coating breakdown reports are frequent and mostly cosmetic; fabric maintenance is chronically behind   # registry: SC-1001
+    - section loss at a node or a cracked weld at a primary connection is a completely different severity and is never batched with the coating backlog   # registry: SC-1001
+
+  Piping:
+    - live hydrocarbon line at full wellhead pressure                       # registry: PL-1002
+    - corrosion under insulation is the known threat and is invisible until the cladding comes off   # registry: PL-1002
+
+# Which equipment types the two override rules apply to. The notes name the
+# concepts (protection layer, evacuation capacity); the mapping to types is
+# INFERRED from the registry comments.
+protection_layer_types:                                                    # notes: Urgency, What moves impact
+  - Pressure Safety Valve
+  - Gas Detector
+  - Deluge System
+  - HVAC Unit
+  - Firewater Pump
+
+evacuation_types:                                                          # notes: Urgency; registry: LB-4102
+  - Lifeboat
+
+urgency_bands:                                                             # notes: Urgency
+  today: [9, 10]
+  this_week: [7, 8]
+  this_month: [5, 6]
+  next_planned_shutdown: [3, 4]
+  backlog: [1, 2]
+
+# Overrides lift the derived urgency to at least the floor; they never lower
+# it. Floor 9, not a flat 10, so two "today" items can still be ordered.   # INFERRED
+overrides:
+  - id: protection_layer_impaired_no_deviation
+    condition: a protection layer is impaired and no deviation is recorded   # notes: Urgency
+    reason: the installation is out of compliance from the moment the impairment is known
+    floor: 9
+  - id: evacuation_below_pob
+    condition: evacuation capacity is reduced below the POB count            # notes: Urgency
+    reason: same compliance logic as an impaired protection layer
+    floor: 9
+
+# Urgency function constants and review rules are added with steps 5 and 6.
