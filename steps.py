@@ -298,14 +298,19 @@ def apply_overrides(score: int, reasons: list[str], a: Assessment, case: Case, r
         if o["id"] == "protection_layer_impaired_no_deviation":
             hit = a.protection_layer_impaired and a.deviation_recorded != "yes" and eq_type in rules[
                 "protection_layer_types"]
+            evidence = (f"model flagged protection_layer_impaired with deviation_recorded={a.deviation_recorded}"
+                        f"{' (unknown is treated as not recorded)' if a.deviation_recorded == 'unknown' else ''}, "
+                        f"and {eq_type} is a protection layer type")
         elif o["id"] == "evacuation_below_pob":
             hit = a.evacuation_capacity_reduced and eq_type in rules["evacuation_types"]
+            evidence = (f"model flagged evacuation_capacity_reduced and {eq_type} is an evacuation type; "
+                        f"POB is not in the data, so the comparison is unconfirmed and left to review")
         else:
             sys.exit(f"error: unknown override {o['id']!r} in rules")
         if hit:
             fired.append(o["id"])
             score = max(score, o["floor"])
-            reasons.append(f"override {o['id']}: {o['condition']}; {o['reason']}; urgency at least {o['floor']}")
+            reasons.append(f"override {o['id']} ({evidence}): {o['reason']}; urgency at least {o['floor']}")
     return score, fired
 
 

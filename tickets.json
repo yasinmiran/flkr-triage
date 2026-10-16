@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T12:49:58+00:00",
+  "generated_at": "2026-10-16T13:24:20+00:00",
   "tickets_generated": 21,
   "tickets": [
     {
@@ -38,7 +38,7 @@
       },
       "urgency": {
         "score": 9,
-        "rationale": "derived 8.7 from impact 9 and likelihood 8, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 8.7 from impact 9 and likelihood 8, impact weighted; override protection_layer_impaired_no_deviation (model flagged protection_layer_impaired with deviation_recorded=unknown (unknown is treated as not recorded), and Pressure Safety Valve is a protection layer type): the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
       "recommended_action": "Treat as impaired protection layer: log in the impairment register and start the regulatory notification. Confirm passing with acoustic or thermal leak check, and gas detection at the tailpipe. Plan PSV removal for bench test and overhaul, with a temporary protection plan.",
       "review_required": true,
@@ -59,7 +59,7 @@
       },
       "urgency": {
         "score": 10,
-        "rationale": "derived 9.7 from impact 10 and likelihood 9, impact weighted; near-certain failure, held at impact 10; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 9.7 from impact 10 and likelihood 9, impact weighted; near-certain failure, held at impact 10; override protection_layer_impaired_no_deviation (model flagged protection_layer_impaired with deviation_recorded=unknown (unknown is treated as not recorded), and Firewater Pump is a protection layer type): the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
       "recommended_action": "Load test and charge-check the starting batteries, inspect connections and charger, and check starting air supply and start system. Repeat witnessed test starts. Check F-1017 on FW-8101 and record the impairment in the register.",
       "review_required": true,
@@ -101,7 +101,7 @@
       },
       "urgency": {
         "score": 9,
-        "rationale": "derived 8.6 from impact 8 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 8.6 from impact 8 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation (model flagged protection_layer_impaired with deviation_recorded=unknown (unknown is treated as not recorded), and Gas Detector is a protection layer type): the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
       "recommended_action": "Treat the head as failed: record the impairment and apply compensatory measures. Replace or repair it, then recalibrate and re-function-test with span gas. Check the other two heads' response and the 2oo3 voting logic status.",
       "review_required": true,
@@ -206,7 +206,7 @@
       },
       "urgency": {
         "score": 10,
-        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation (model flagged protection_layer_impaired with deviation_recorded=unknown (unknown is treated as not recorded), and HVAC Unit is a protection layer type): the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
       "recommended_action": "Raise a protection-layer impairment and confirm it is in the impairment register with compensating measures. Find the leak path (damper position check, door seal and envelope smoke/leak survey), repair, then repeat the differential pressure test to at least 50 Pa.",
       "review_required": true,
@@ -227,7 +227,7 @@
       },
       "urgency": {
         "score": 10,
-        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override protection_layer_impaired_no_deviation (model flagged protection_layer_impaired with deviation_recorded=unknown (unknown is treated as not recorded), and Deluge System is a protection layer type): the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
       "recommended_action": "Record the north quadrant deluge impairment in the impairment register now with compensatory measures. Rod out or flush the branch pipework, replace the blocked nozzles, and retest the full flow. Then check the F-1020 valve lock-off controls.",
       "review_required": true,
@@ -248,7 +248,7 @@
       },
       "urgency": {
         "score": 10,
-        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override evacuation_below_pob: evacuation capacity is reduced below the POB count; same compliance logic as an impaired protection layer; urgency at least 9. Band: today."
+        "rationale": "derived 10.0 from impact 10 and likelihood 10, impact weighted; override evacuation_below_pob (model flagged evacuation_capacity_reduced and Lifeboat is an evacuation type; POB is not in the data, so the comparison is unconfirmed and left to review): same compliance logic as an impaired protection layer; urgency at least 9. Band: today."
       },
       "recommended_action": "Overhaul the hydraulic release gear on LB-4102 (strip, inspect, clean/replace worn parts, restore to spec force), then re-test release and get the class certificate reinstated. Verify LB-4101 condition and check capacity against POB now.",
       "review_required": true,
@@ -353,7 +353,7 @@
       },
       "urgency": {
         "score": 9,
-        "rationale": "derived 8.1 from impact 9 and likelihood 6, impact weighted; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 8.1 from impact 9 and likelihood 6, impact weighted; override protection_layer_impaired_no_deviation (model flagged protection_layer_impaired with deviation_recorded=unknown (unknown is treated as not recorded), and Firewater Pump is a protection layer type): the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
       "recommended_action": "Check test line valve line-up and rerun the test with flow and pressure measured against the pump curve. Compare with earlier test data. If the shortfall persists, plan pump internals inspection. Review alongside F-1003 on FW-8102.",
       "review_required": true,
@@ -416,7 +416,7 @@
       },
       "urgency": {
         "score": 10,
-        "rationale": "derived 9.7 from impact 10 and likelihood 9, impact weighted; near-certain failure, held at impact 10; override protection_layer_impaired_no_deviation: a protection layer is impaired and no deviation is recorded; the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
+        "rationale": "derived 9.7 from impact 10 and likelihood 9, impact weighted; near-certain failure, held at impact 10; override protection_layer_impaired_no_deviation (model flagged protection_layer_impaired with deviation_recorded=no, and Deluge System is a protection layer type): the installation is out of compliance from the moment the impairment is known; urgency at least 9. Band: today."
       },
       "recommended_action": "Raise a priority work order to reverify deluge flow and spray pattern in the north quadrant after reopening, clean or replace the ~12 defective nozzles from F-1011, and investigate who chained the valve and why. Lock-open and tag the valve, and review valve status checks.",
       "review_required": true,
