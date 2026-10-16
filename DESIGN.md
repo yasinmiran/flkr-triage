@@ -66,8 +66,9 @@ would score the item as if it had no backup.
 
 14. `rules.yml` was drafted with an LLM from `domain_knowledge.md` and
 the registry `engineer_comment` column, source noted per bullet. i check
-every bullet against the source and cut what i cant trace. nothing comes
-from the findings file.
+every bullet against the source and cut what i cant trace. no bullet is
+copied from the findings file; the one line added because of what the
+first run did with F-1016 says so in its comment (point 26).
 
 15. i checked the sdk in the venv (`anthropic==1.15.0`). no `temperature`
 param anymore, so i cant claim temp 0. structured output is
