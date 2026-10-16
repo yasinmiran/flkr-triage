@@ -127,10 +127,12 @@ class Assessment(BaseModel):
     uncertainty: Literal["low", "medium", "high"] = Field(
         description="How much the scores depend on facts the finding does not establish.")
 
+
 @dataclass
 class Verdict:
     assessment: Assessment | None
     violations: list[str] = field(default_factory=list)
+
 
 def main(argv=None):
     load_dotenv(Path(__file__).with_name(".env"))
@@ -161,8 +163,10 @@ def main(argv=None):
         if a is None:
             print(case.finding.finding_id, "FAILED", v.violations)
             continue
+        score, reasons = urgency(a, case, rules)
+        score, fired = apply_overrides(score, reasons, a, case, rules)
         print(f"{case.finding.finding_id} L={a.likelihood_of_failure.score} I={a.impact_of_failure.score} "
-              f"cf={a.confirmed_failure} oos={a.out_of_service} pli={a.protection_layer_impaired} "
+              f"U={score} cf={a.confirmed_failure} oos={a.out_of_service} pli={a.protection_layer_impaired} "
               f"dev={a.deviation_recorded} evac={a.evacuation_capacity_reduced} unc={a.uncertainty} "
               f"violations={v.violations}")
     return 0
@@ -244,6 +248,44 @@ def invariant_violations(a: Assessment, case: Case) -> list[str]:
     if case.equipment.safety_critical_element and a.confirmed_failure and I < 5:
         found.append(f"confirmed failure on a safety critical element but impact is {I}")
     return found
+
+
+def urgency(a: Assessment, case: Case, rules: dict) -> tuple[int, list[str]]:
+    u = rules["urgency"]
+    L, I = a.likelihood_of_failure.score, a.impact_of_failure.score
+    base = u["weights"]["impact"] * I + u["weights"]["likelihood"] * L
+    reasons = [f"derived {base:.1f} from impact {I} and likelihood {L}, impact weighted"]
+    if L >= u["near_certain"]["likelihood_at_least"] and base < I:
+        base = I
+        reasons.append(f"near-certain failure, held at impact {I}")
+    cap = u["inconsequential"]
+    if I <= cap["impact_at_most"] and base > cap["urgency_at_most"]:
+        base = cap["urgency_at_most"]
+        reasons.append("inconsequential item, capped at next planned shutdown")
+    score = int(base + 0.5)
+    floor = u["sce_floor"]
+    if case.equipment.safety_critical_element and I >= floor["impact_at_least"] and score < floor["urgency_at_least"]:
+        score = floor["urgency_at_least"]
+        reasons.append("safety critical element with high impact, this week at the latest")
+    return score, reasons
+
+
+def apply_overrides(score: int, reasons: list[str], a: Assessment, case: Case, rules: dict) -> tuple[int, list[str]]:
+    fired = []
+    eq_type = case.equipment.equipment_type
+    for o in rules["overrides"]:
+        if o["id"] == "protection_layer_impaired_no_deviation":
+            hit = a.protection_layer_impaired and a.deviation_recorded != "yes" and eq_type in rules[
+                "protection_layer_types"]
+        elif o["id"] == "evacuation_below_pob":
+            hit = a.evacuation_capacity_reduced and eq_type in rules["evacuation_types"]
+        else:
+            sys.exit(f"error: unknown override {o['id']!r} in rules")
+        if hit:
+            fired.append(o["id"])
+            score = max(score, o["floor"])
+            reasons.append(f"override {o['id']}: {o['condition']}; {o['reason']}; urgency at least {o['floor']}")
+    return score, fired
 
 
 def load_dotenv(path: Path) -> None:

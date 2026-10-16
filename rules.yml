@@ -15,20 +15,20 @@
 version: 1
 source: domain_knowledge.md and equipment_registry.csv engineer_comment
 
-registry_scores:                                                           # notes: Registry scores
+registry_scores: # notes: Registry scores
   criticality_score:
-    range: [1, 10]
+    range: [ 1, 10 ]
     direction: normal        # 10 = most critical
     starting_point_for: impact
   reliability_score:
-    range: [1, 10]
+    range: [ 1, 10 ]
     direction: inverted      # 10 = highly reliable, 1 = fails frequently
     starting_point_for: likelihood
     warning: runs opposite to likelihood; new starters routinely invert it
   note: neither is sufficient alone; the finding text moves both. A reliable item with a crack in it is still cracked.
 
 general:
-  likelihood:                                                              # notes: The two questions
+  likelihood: # notes: The two questions
     concerns: the item itself, given what the inspection found; how likely it is to stop performing its function in the near term
     up:
       - a trend that is still moving                                       # notes: What moves likelihood
@@ -41,7 +41,7 @@ general:
       - a measurement inside its acceptance criterion                      # notes: What moves likelihood
       - an item that is out of service and not required to be in service  # notes: What moves likelihood
 
-  impact:                                                                  # notes: The two questions
+  impact: # notes: The two questions
     concerns: what happens if it does fail; depends on what the equipment does and what sits behind it, not on the wording of the finding
     scope: the consequence of the failure mode this finding points to, not the worst thing this equipment could ever do; a finding that touches only appearance, labels or records has housekeeping consequences even on a critical item   # INFERRED from the down list below; first run scored an illegible PSV tag impact 8
     up:
@@ -63,15 +63,15 @@ general:
     - treating one head lost from a voted group as a defeat; it is a degradation, impact moderate, and time-limited because the next failure defeats it   # notes: Two recurring errors
     - resolving uncertainty by picking a mid-range score                   # notes: Output expectations
 
-  output:                                                                  # notes: Output expectations
+  output: # notes: Output expectations
     summary:
-      must_cover: [what is wrong, on what, why it matters]
+      must_cover: [ what is wrong, on what, why it matters ]
       readable_without_inspection_record: true
       not_a_restatement_of_finding_text: true
-      must_not_omit: [a measurement, a repeat occurrence, a standby already unavailable]
+      must_not_omit: [ a measurement, a repeat occurrence, a standby already unavailable ]
     recommended_action: names a specific activity; "investigate further" is not sufficient   # brief: section 3
     uncertainty: state it explicitly; never resolve it with a mid-range score
-    loss_of_confidence_causes:    # ordered, worst first
+    loss_of_confidence_causes: # ordered, worst first
       - confidently incorrect scores on safety critical equipment
       - a summary that omits a decision-changing detail
       - the same finding scored differently on different days
@@ -134,22 +134,28 @@ by_equipment_type:
 # Which equipment types the two override rules apply to. The notes name the
 # concepts (protection layer, evacuation capacity); the mapping to types is
 # INFERRED from the registry comments.
-protection_layer_types:                                                    # notes: Urgency, What moves impact
+protection_layer_types: # notes: Urgency, What moves impact
   - Pressure Safety Valve
   - Gas Detector
   - Deluge System
   - HVAC Unit
   - Firewater Pump
 
-evacuation_types:                                                          # notes: Urgency; registry: LB-4102
+evacuation_types: # notes: Urgency; registry: LB-4102
   - Lifeboat
 
-urgency_bands:                                                             # notes: Urgency
-  today: [9, 10]
-  this_week: [7, 8]
-  this_month: [5, 6]
-  next_planned_shutdown: [3, 4]
-  backlog: [1, 2]
+urgency_bands: # notes: Urgency
+  today: [ 9, 10 ]
+  this_week: [ 7, 8 ]
+  this_month: [ 5, 6 ]
+  next_planned_shutdown: [ 3, 4 ]
+  backlog: [ 1, 2 ]
+
+urgency: # INFERRED; notes: Urgency gives the shape, not the numbers
+  weights: { impact: 0.7, likelihood: 0.3 }
+  near_certain: { likelihood_at_least: 9 }        # base is lifted to at least impact
+  inconsequential: { impact_at_most: 3, urgency_at_most: 4 }
+  sce_floor: { impact_at_least: 7, urgency_at_least: 7 }
 
 # Overrides lift the derived urgency to at least the floor; they never lower
 # it. Floor 9, not a flat 10, so two "today" items can still be ordered.   # INFERRED
