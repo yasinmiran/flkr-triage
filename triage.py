@@ -127,6 +127,10 @@ class Assessment(BaseModel):
     uncertainty: Literal["low", "medium", "high"] = Field(
         description="How much the scores depend on facts the finding does not establish.")
 
+@dataclass
+class Verdict:
+    assessment: Assessment | None
+    violations: list[str] = field(default_factory=list)
 
 def main(argv=None):
     load_dotenv(Path(__file__).with_name(".env"))
@@ -149,16 +153,18 @@ def main(argv=None):
     rules_text = rules_path.read_text()
     rules = yaml.safe_load(rules_text)
     client = anthropic.Anthropic()
-    assessments: dict[str, Assessment | None] = {}
+    verdicts: dict[str, Verdict] = {}
     for case in cases:
-        a = assess(client, case, rules, rules_text)
-        assessments[case.finding.finding_id] = a
+        v = assess(client, case, rules, rules_text)
+        verdicts[case.finding.finding_id] = v
+        a = v.assessment
         if a is None:
-            print(case.finding.finding_id, "FAILED")
-        else:
-            print(f"{case.finding.finding_id} L={a.likelihood_of_failure.score} I={a.impact_of_failure.score} "
-                  f"cf={a.confirmed_failure} oos={a.out_of_service} pli={a.protection_layer_impaired} "
-                  f"dev={a.deviation_recorded} evac={a.evacuation_capacity_reduced} unc={a.uncertainty}")
+            print(case.finding.finding_id, "FAILED", v.violations)
+            continue
+        print(f"{case.finding.finding_id} L={a.likelihood_of_failure.score} I={a.impact_of_failure.score} "
+              f"cf={a.confirmed_failure} oos={a.out_of_service} pli={a.protection_layer_impaired} "
+              f"dev={a.deviation_recorded} evac={a.evacuation_capacity_reduced} unc={a.uncertainty} "
+              f"violations={v.violations}")
     return 0
 
 
@@ -200,18 +206,44 @@ def ask_model(client: anthropic.Anthropic, system: str, messages: list[MessagePa
 MAX_ATTEMPTS = 3
 
 
-def assess(client: anthropic.Anthropic, case: Case, rules: dict, rules_text: str) -> Assessment | None:
+def assess(client: anthropic.Anthropic, case: Case, rules: dict, rules_text: str) -> Verdict:
     system = system_prompt(rules)
     messages: list[MessageParam] = [MessageParam(role="user", content=user_prompt(case, rules))]
+    invariants_retried = False
     for _ in range(MAX_ATTEMPTS):
         text = ask_model(client, system, messages, rules_text)
         try:
-            return Assessment.model_validate_json(text)
+            assessment = Assessment.model_validate_json(text)
         except ValidationError as error:
             messages.append(MessageParam(role="assistant", content=text))
             messages.append(MessageParam(role="user",
                                          content=f"That response failed validation:\n{error}\nReturn a corrected response."))
-    return None
+            continue
+        violations = invariant_violations(assessment, case)
+        if violations and not invariants_retried:
+            invariants_retried = True
+            messages.append(MessageParam(role="assistant", content=text))
+            messages.append(MessageParam(role="user", content="The scores contradict the flags:\n- " + "\n- ".join(
+                violations) + "\nReconsider and return a corrected response."))
+            continue
+        return Verdict(assessment, violations)
+    return Verdict(None, ["no valid response after retries"])
+
+
+def invariant_violations(a: Assessment, case: Case) -> list[str]:
+    L, I = a.likelihood_of_failure.score, a.impact_of_failure.score
+    found = []
+    if a.confirmed_failure and a.out_of_service:
+        found.append("confirmed_failure and out_of_service cannot both be true")
+    if a.confirmed_failure and L < 8:
+        found.append(
+            f"confirmed_failure is true but likelihood is {L}; a confirmed failure sits at the top of the range")
+    if a.out_of_service and L > 4:
+        found.append(
+            f"out_of_service is true but likelihood is {L}; an item not required to be in service cannot be likely to fail in service")
+    if case.equipment.safety_critical_element and a.confirmed_failure and I < 5:
+        found.append(f"confirmed failure on a safety critical element but impact is {I}")
+    return found
 
 
 def load_dotenv(path: Path) -> None:
