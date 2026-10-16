@@ -175,6 +175,14 @@ platform and 21 findings.
 head in the same 2oo3 group would not be detected as a defeat. a group
 id column in the registry would fix it.
 
+35. i used claude code to reorganise the one file into `models.py`,
+`loaders.py`, `steps.py` and `triage.py` for maintainability, then
+verified it two ways: an agent compared every function against the
+single-file version (29 identical, the rest moved or renamed), and i
+read the four files myself. i checked the output from the cache was byte
+identical before the rules comment cleanup in the same commit forced a
+rerun.
+
 **A. structured output**
 
 the api gets a json schema, shape only. pydantic checks the reply with
@@ -334,11 +342,3 @@ answers to A to D were drafted with the agent from my decision log, in
 my words, and i read and edited them before sending.
 
 no content in `tickets.json` was written or edited by hand.
-
-35. i used claude code to reorganise the one file into `models.py`,
-`loaders.py`, `steps.py` and `triage.py` for maintainability, then
-verified it two ways: an agent compared every function against the
-single-file version (29 identical, the rest moved or renamed), and i
-read the four files myself. i checked the output from the cache was byte
-identical before the rules comment cleanup in the same commit forced a
-rerun.
