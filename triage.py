@@ -165,10 +165,11 @@ def main(argv=None):
             continue
         score, reasons = urgency(a, case, rules)
         score, fired = apply_overrides(score, reasons, a, case, rules)
+        required, reason = review(a, case, v, fired)
         print(f"{case.finding.finding_id} L={a.likelihood_of_failure.score} I={a.impact_of_failure.score} "
               f"U={score} cf={a.confirmed_failure} oos={a.out_of_service} pli={a.protection_layer_impaired} "
               f"dev={a.deviation_recorded} evac={a.evacuation_capacity_reduced} unc={a.uncertainty} "
-              f"violations={v.violations}")
+              f"violations={v.violations} {fired} review={required} ")
     return 0
 
 
@@ -286,6 +287,24 @@ def apply_overrides(score: int, reasons: list[str], a: Assessment, case: Case, r
             score = max(score, o["floor"])
             reasons.append(f"override {o['id']}: {o['condition']}; {o['reason']}; urgency at least {o['floor']}")
     return score, fired
+
+
+def review(a: Assessment, case: Case, verdict: Verdict, fired: list[str]) -> tuple[bool, str | None]:
+    reasons = []
+    if case.equipment.safety_critical_element:
+        reasons.append("Safety Critical Element: every ticket is checked by a human before it enters the work queue.")
+    if fired:
+        reasons.append("An escalation override set the urgency.")
+    if verdict.violations:
+        reasons.append(
+            "Scores contradicted the model's own flags after a retry: " + "; ".join(verdict.violations) + ".")
+    if a.uncertainty == "high":
+        reasons.append("The model rated its uncertainty high.")
+    if any(n.kind is NoteKind.PARTNER_HAS_FINDING for n in case.notes):
+        reasons.append("The redundant partner also has an open finding; redundancy credit withdrawn.")
+    if any(n.kind is NoteKind.PARTNER_UNVERIFIED for n in case.notes):
+        reasons.append("The redundant partner cannot be verified.")
+    return bool(reasons), " ".join(reasons) or None
 
 
 def load_dotenv(path: Path) -> None:
