@@ -29,11 +29,11 @@ factory.
 
 5. Case is the unit of work i use. it has a list of batch notes.
 also, an item with two findings record two cases but share the same
-equipment. at the end i know have 18 equipment objects, 21 cases,
+equipment. at the end i have 18 equipment objects, 21 cases,
 21 tickets.
 
 6. i use two flat dictionaries. static `registry: dict[str, Equipment]`
-per batch `findings_by_equipment: dict[str, list[Finding]]` to keep it clea
+per batch `findings_by_equipment: dict[str, list[Finding]]` to keep it clean.
 i didnt mix a static thing with a per-run thing. thats why two containers
 to hold them.
 
@@ -144,7 +144,8 @@ least 7). rounding is `int(base + 0.5)` because python rounds 8.5 to 8.
 29. overrides need two votes: the model flag and the equipment type on
 the list in `rules.yml`. F-1008 (structure) and F-1013 (transmitter) had
 the flag and did not fire. 8 fired: 7 protection layer, 1 evacuation.
-F-1005 landed at L10 I7 U9, the example ticket's numbers.
+in that run F-1005 landed at L10 I7 U9, the example ticket's numbers;
+in the committed run it is I8.
 
 30. review has a fixed set of reasons: SCE, override fired, unresolved
 invariant, uncertainty high, partner has a finding, partner unverified,
@@ -245,8 +246,9 @@ lines, and every number is in `rules.yml` for the engineer to tune.
 **D. limits**
 
 when it defers to a human: any of the seven review triggers (point 30).
-in this batch 14 of 21 go to review: the 12 SCE items, the two level
-transmitters via the partner note. 7 pass straight through.
+in the committed file 15 of 21 go to review: the 12 SCE items, the two
+level transmitters via the partner note, and F-1004 via the today band.
+6 pass straight through.
 
 what i didnt build, and why:
 - rag or any retrieval. 2 pages fit in the prompt.
@@ -321,4 +323,6 @@ no content in `tickets.json` was written or edited by hand.
 `loaders.py`, `steps.py` and `triage.py` for maintainability, then
 verified it two ways: an agent compared every function against the
 single-file version (29 identical, the rest moved or renamed), and i
-read the four files myself. output from the cache was byte identical.
+read the four files myself. i checked the output from the cache was byte
+identical before the rules comment cleanup in the same commit forced a
+rerun.
