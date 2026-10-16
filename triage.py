@@ -105,7 +105,8 @@ def main(argv=None):
         findings_by_equipment[finding.equipment_id].append(finding)
         cases.append(Case(finding=finding, equipment=eq))
     annotate_batch(cases, registry, findings_by_equipment)
-    rules = load_rules(Path("rules.yml"))
+    rules = load_rules(Path(__file__).with_name("rules.yml"))
+    print(rules_for(cases[2], rules)["equipment_type"])
     return 0
 
 
@@ -114,8 +115,14 @@ def load_rules(path: Path) -> dict:
 
 
 def rules_for(case: Case, rules: dict) -> dict:
-    pass
-
+    section = rules["by_equipment_type"].get(case.equipment.equipment_type)
+    if section is None:
+        sys.exit(f"error: no rules section for equipment type {case.equipment.equipment_type!r}")
+    return {
+        "registry_scores": rules["registry_scores"],
+        "general": rules["general"],
+        "equipment_type": section,
+    }
 
 def leading_sentences(text: str, n: int) -> str:
     return " ".join(SENTENCE_END.split(text.strip(), maxsplit=n)[:n])
