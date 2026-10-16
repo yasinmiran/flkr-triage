@@ -322,8 +322,10 @@ def apply_overrides(score: int, reasons: list[str], a: Assessment, case: Case, r
     return score, fired
 
 
-def review(a: Assessment, case: Case, verdict: Verdict, fired: list[str]) -> tuple[bool, str | None]:
+def review(a: Assessment, case: Case, verdict: Verdict, fired: list[str], urgency_score: int) -> tuple[bool, str | None]:
     reasons = []
+    if urgency_score >= 9:
+        reasons.append("Urgency is in the today band.")
     if case.equipment.safety_critical_element:
         reasons.append("Safety Critical Element: every ticket is checked by a human before it enters the work queue.")
     if fired:
@@ -355,7 +357,7 @@ def build_ticket(case: Case, verdict: Verdict, rules: dict) -> Ticket:
         )
     urgency_score, reasons = urgency(a, case, rules)
     urgency_score, fired = apply_overrides(urgency_score, reasons, a, case, rules)
-    required, reason = review(a, case, verdict, fired)
+    required, reason = review(a, case, verdict, fired, urgency_score)
     return Ticket(
         ticket_id=ticket_id, finding_id=f.finding_id, equipment_id=eq.equipment_id,
         summary=a.summary,
@@ -468,7 +470,7 @@ def annotate_batch(
             case.notes.append(
                 Note(
                     NoteKind.VOTED_GROUP,
-                    f"{eq.redundancy} group: losing one head is degradation, not defeat, but the margin is gone."
+                    f"{eq.redundancy} group: with one head lost it runs 2oo2, both remaining heads must agree; degradation, not defeat, but the next failure defeats it."
                 )
             )
         elif m := PARTNER_TAG.search(eq.redundancy):
