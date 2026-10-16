@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
 from pathlib import Path
+from pydantic import BaseModel, Field
+from typing import Literal
 
 import yaml
 
@@ -89,6 +91,22 @@ class Case:
     notes: list[Note] = field(default_factory=list)
 
 
+class ScoredDimension(BaseModel):
+    score: int = Field(ge=1, le=10)
+    rationale: str = Field(min_length=1)
+
+class Assessment(BaseModel):
+    summary: str = Field(max_length=300)
+    likelihood_of_failure: ScoredDimension
+    impact_of_failure: ScoredDimension
+    recommended_action: str = Field(max_length=300)
+    confirmed_failure: bool = Field(description="The item has already failed to perform a function it is currently required to perform.")
+    out_of_service: bool = Field(description="The item is out of service and not required to be in service.")
+    protection_layer_impaired: bool = Field(description="A layer that prevents or mitigates a major accident is not fully available because of this finding.")
+    deviation_recorded: Literal["yes", "no", "unknown"] = Field(description="Whether the finding states that the impairment is recorded in the impairment register or a deviation is in place.")
+    evacuation_capacity_reduced: bool = Field(description="This finding reduces the installation's capacity to evacuate people.")
+    uncertainty: Literal["low", "medium", "high"] = Field(description="How much the scores depend on facts the finding does not establish.")
+
 def main(argv=None):
     registry_path, findings_path = parse_args(argv)
     registry_rows = load_csv(registry_path)
@@ -123,6 +141,7 @@ def rules_for(case: Case, rules: dict) -> dict:
         "general": rules["general"],
         "equipment_type": section,
     }
+
 
 def leading_sentences(text: str, n: int) -> str:
     return " ".join(SENTENCE_END.split(text.strip(), maxsplit=n)[:n])
