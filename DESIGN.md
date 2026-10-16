@@ -127,8 +127,10 @@ the 5 to 8 band for a voted group.
 from the equipment, not the finding. F-1016 (illegible PSV tag, in date)
 got impact 8, rationale literally "impact rests on what the valve does,
 not the finding wording". F-1009 (coating) got 7. fix: one `scope` line
-under `general.impact` in `rules.yml`. rerun: 8 -> 3 and 7 -> 3, nothing
-else touched. thats question B answered by doing it.
+under `general.impact` in `rules.yml`. rerun: 8 -> 3 and 7 -> 3. nothing
+else was edited; the other tickets drifted by the usual point or so,
+since a rules edit re-rolls every call. thats question B answered by
+doing it.
 
 27. invariants: confirmed failure -> L >= 8. out of service -> L <= 4.
 both true is a contradiction. SCE + confirmed failure -> I >= 5. sent
@@ -187,8 +189,10 @@ against the flags.
   rule (confirmed failure with likelihood 3, out of service with
   likelihood 8). sent back once with the contradiction. if it persists i
   keep the score, never rewrite it, and the ticket goes to review with
-  the reason. the rest is what `review_required` is for. a human
-  approves every ticket.
+  the reason. the rest is what `review_required` is for. two levels of
+  human: the file is a draft the duty engineer approves, and
+  `review_required` marks the tickets that must be checked one by one
+  before entering the work queue.
 - cannot produce a ticket: the ticket is still written. scores 10, 10,
   10, rationale "triage failed", review required, and the run exits 1.
   an untriaged finding on a platform must not vanish.
@@ -226,7 +230,8 @@ the model never outputs urgency. code does:
     then overrides: floor 9
 
 corners:
-- likelihood 10, impact 1: 3.7, capped at 4. next planned shutdown.
+- likelihood 10, impact 1: 3.7, rounds to 4, next planned shutdown. the
+  cap is for weights that would push it higher.
 - likelihood 1, impact 10: 7.3 -> 7. this week.
 - 10 and 10: 10. 1 and 1: 1.
 
@@ -282,7 +287,14 @@ the moves are inside those groups. this is what the notes call "the same
 finding scored differently on different days", and the honest answer is:
 the model drifts by about a point, the cache keeps a run stable, the
 human reviews the ones that matter, and the floors and caps in code are
-what keep the drift from changing a decision.
+what hold the override cases: the floors held on every protection layer
+and evacuation ticket. drift did move `review_required` twice at the
+today-band boundary, so the review decision is not immune; the override
+cases are.
+
+the measurement itself: i told an agent to clear the cache, rerun, and
+fetch me the diff while i was working on something else. the numbers
+above are what it brought back; i checked them against the two files.
 
 **assumptions**
 
@@ -316,6 +328,10 @@ i used an llm for two things and reviewed both.
   sdk doesnt have; it proposed `content[0].text`, which crashes on a
   thinking block; it proposed truncating summaries to 300 chars, i made
   it a validation error with a retry instead.
+
+this document: points 1 to 14 i wrote. points 15 onward and the
+answers to A to D were drafted with the agent from my decision log, in
+my words, and i read and edited them before sending.
 
 no content in `tickets.json` was written or edited by hand.
 
