@@ -317,8 +317,8 @@ i used an llm for two things and reviewed both.
 
 no content in `tickets.json` was written or edited by hand.
 
-35. split into four files, in run order. `models.py` (the shapes),
-`loaders.py` (csv, .env, rules), `steps.py` (the seven steps top to
-bottom, one function per step), `triage.py` (main and args). i did this
-last, after the pipeline worked, and checked the output was byte
-identical from the cache before committing.
+35. i used claude code to reorganise the one file into `models.py`,
+`loaders.py`, `steps.py` and `triage.py` for maintainability, then
+verified it two ways: an agent compared every function against the
+single-file version (29 identical, the rest moved or renamed), and i
+read the four files myself. output from the cache was byte identical.
