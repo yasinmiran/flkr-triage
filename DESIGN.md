@@ -337,6 +337,8 @@ i used an llm for three things and reviewed all of them.
   thinking block; it proposed truncating summaries to 300 chars, i made
   it a validation error with a retry instead.
 
+the README was drafted by the agent from the repo and read by me.
+
 this document: points 1 to 14 i wrote. points 15 onward and the
 answers to A to D were drafted with the agent from my decision log, in
 my words, and i read and edited them before sending.
