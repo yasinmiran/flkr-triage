@@ -8,6 +8,8 @@ from datetime import date
 from enum import Enum
 from pathlib import Path
 
+import yaml
+
 DEFAULT_REGISTRY = "data/equipment_registry.csv"
 DEFAULT_FINDINGS = "data/inspection_findings.csv"
 
@@ -103,7 +105,16 @@ def main(argv=None):
         findings_by_equipment[finding.equipment_id].append(finding)
         cases.append(Case(finding=finding, equipment=eq))
     annotate_batch(cases, registry, findings_by_equipment)
+    rules = load_rules(Path("rules.yml"))
     return 0
+
+
+def load_rules(path: Path) -> dict:
+    return yaml.safe_load(path.read_text())
+
+
+def rules_for(case: Case, rules: dict) -> dict:
+    pass
 
 
 def leading_sentences(text: str, n: int) -> str:
